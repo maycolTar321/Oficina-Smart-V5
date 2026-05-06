@@ -3,213 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OFICINA SMART - V5 MOBILE</title>
+    <title>OFICINA PRO - V6 INFINITY</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-    <!-- CABECERA ESTILO SMART APP -->
-    <header class="app-header">
-        <div class="profile-circle">
-            <div id="header-avatar">MA</div>
+    <header class="header-v6">
+        <div class="user-tag">
+            <div class="avatar-v6" id="h-avatar">MA</div>
+            <div>
+                <h2 id="h-user" style="font-size: 16px;">Maycol Avila</h2>
+                <p style="font-size: 10px; color: var(--text-dim); font-weight: 700;">ADMINISTRADOR</p>
+            </div>
         </div>
-        <h2 id="header-user">Maycol Avila</h2>
-        <p style="font-size: 11px; opacity: 0.8; font-weight: 700;">ADMINISTRADOR OFICINA</p>
+        <div style="text-align: right;">
+            <div id="clock" style="font-family: 'JetBrains Mono'; font-size: 14px; font-weight: 800;">00:00:00</div>
+            <div id="date" style="font-size: 9px; color: var(--text-dim); font-weight: 700;">...</div>
+        </div>
     </header>
 
-    <!-- WIDGET PRINCIPAL (MONITOR DE INTERNET) -->
-    <div class="main-widget">
+    <!-- MONITOR DE INTERNET (RESTAURADO Y MEJORADO) -->
+    <div class="monitor-card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 11px; font-weight: 800; color: var(--text-muted);">FONDO INTERNET</span>
-            <span id="internet-porc" style="font-size: 11px; font-weight: 800; color: var(--primary);">0%</span>
+            <span class="progress-label">Fondo Internet Mensual</span>
+            <span id="int-perc" style="font-weight: 800; color: var(--primary);">0%</span>
         </div>
-        <h2 id="internet-bs" style="font-size: 28px; font-weight: 800; margin: 5px 0;">0.00 Bs</h2>
-        <div class="progress-container">
-            <div id="internet-bar" class="progress-bar"></div>
+        <h2 id="int-bs" class="progress-bs">0.00 Bs</h2>
+        <div class="bar-bg">
+            <div id="int-bar" class="bar-fill"></div>
         </div>
-        <p id="internet-status" style="font-size: 12px; font-weight: 700; color: var(--text-muted);">
-            Cargando estado...
-        </p>
+        <div id="int-status" style="font-size: 12px; font-weight: 700; color: var(--text-dim); display: flex; align-items: center; gap: 8px;">
+            <span id="int-icon">⏳</span> <span id="int-text">Calculando saldo...</span>
+        </div>
     </div>
 
     <main>
         
-        <!-- SECCIÓN: PAGOS (HOME) -->
+        <!-- VISTA: PAGOS (RESTAURADA CON TODAS LAS FUNCIONES) -->
         <div id="view-pagos" class="view active">
-            <h3 style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">GESTIÓN RÁPIDA</h3>
-            <button class="btn-main" onclick="app.action('Tramite Civil', 36, 'Oficial')">
-                📑 REGISTRAR PAGO CIVIL (36 Bs)
-            </button>
+            <div class="action-grid">
+                <div class="btn-action featured" onclick="app.action('Tramite Civil', 36, 'Oficial')">
+                    <div class="icon-box">⚖️</div>
+                    <span class="label-main">REGISTRAR TRÁMITE CIVIL</span>
+                    <span class="label-sub">Monto Fijo: 36 Bs</span>
+                </div>
 
-            <div class="card-grid">
-                <div class="smart-card" onclick="app.action('Ximena', 10, 'Internet')">
-                    <div class="card-icon">👤</div>
-                    <span style="font-size: 12px; font-weight: 800;">Ximena</span>
-                    <span style="font-size: 10px; color: var(--text-muted);">Internet</span>
+                <div style="grid-column: span 2; margin: 10px 0 5px; font-size: 11px; font-weight: 800; color: var(--text-dim); letter-spacing: 1px;">APORTES INTERNET (10 Bs)</div>
+                
+                <div class="btn-action" onclick="app.action('Ximena', 10, 'Internet')">
+                    <div class="icon-box">👤</div>
+                    <span class="label-main">XIMENA</span>
+                    <span class="label-sub">Internet</span>
                 </div>
-                <div class="smart-card" onclick="app.action('Maycol', 10, 'Internet')">
-                    <div class="card-icon">⚡</div>
-                    <span style="font-size: 12px; font-weight: 800;">Maycol</span>
-                    <span style="font-size: 10px; color: var(--text-muted);">Internet</span>
+                <div class="btn-action" onclick="app.action('Maycol', 10, 'Internet')">
+                    <div class="icon-box">⚡</div>
+                    <span class="label-main">MAYCOL</span>
+                    <span class="label-sub">Internet</span>
                 </div>
-                <div class="smart-card" onclick="app.action('Samuel', 10, 'Internet')">
-                    <div class="card-icon">🔥</div>
-                    <span style="font-size: 12px; font-weight: 800;">Samuel</span>
-                    <span style="font-size: 10px; color: var(--text-muted);">Internet</span>
+                <div class="btn-action" onclick="app.action('Samuel', 10, 'Internet')">
+                    <div class="icon-box">🔥</div>
+                    <span class="label-main">SAMUEL</span>
+                    <span class="label-sub">Internet</span>
                 </div>
-                <div class="smart-card" onclick="app.action(app.config.officialName, 10, 'Internet', true)">
-                    <div class="card-icon">👮</div>
-                    <span class="official-name-display" style="font-size: 12px; font-weight: 800;">Oficial</span>
-                    <span style="font-size: 10px; color: var(--text-muted);">Internet</span>
+                <div class="btn-action" onclick="app.action(app.config.officialName, 10, 'Internet', true)">
+                    <div class="icon-box">👮</div>
+                    <span class="official-name-display label-main">Oficial</span>
+                    <span class="label-sub">Internet</span>
                 </div>
-            </div>
 
-            <div style="background: white; border-radius: 24px; padding: 20px; margin-top: 20px; box-shadow: var(--shadow-soft);">
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <span style="font-size: 10px; font-weight: 800; color: var(--success);">SUGERENCIA AGUA</span>
-                    <h4 id="suggestion-text" style="font-size: 15px;">...</h4>
+                <div style="grid-column: span 2; margin: 15px 0 5px; font-size: 11px; font-weight: 800; color: var(--text-dim); letter-spacing: 1px;">TURNOS AGUA (36 Bs)</div>
+
+                <div class="btn-action" style="grid-column: span 2; background: rgba(16, 185, 129, 0.1); border-color: var(--secondary);" onclick="app.action(app.config.officialName + ' / Maycol', 36, 'Agua', true)">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span class="official-name-display label-main">Oficial</span>
+                            <span class="label-main">/ MAYCOL</span>
+                        </div>
+                        <div class="icon-box" style="background: var(--secondary);">💧</div>
+                    </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <button class="smart-card" style="align-items: center; text-align: center;" onclick="app.action(app.config.officialName + ' / Maycol', 36, 'Agua', true)">
-                        <div class="card-icon">💧</div>
-                        <span class="official-name-display" style="font-size: 11px; font-weight: 800;">Oficial</span>
-                    </button>
-                    <button class="smart-card" style="align-items: center; text-align: center;" onclick="app.action('Samuel / Ximena', 36, 'Agua')">
-                        <div class="card-icon">💧</div>
-                        <span style="font-size: 11px; font-weight: 800;">S. / X.</span>
-                    </button>
+
+                <div class="btn-action" style="grid-column: span 2;" onclick="app.action('Samuel / Ximena', 36, 'Agua')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span class="label-main">SAMUEL / XIMENA</span>
+                        </div>
+                        <div class="icon-box">💧</div>
+                    </div>
+                </div>
+
+                <div style="grid-column: span 2; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 20px; text-align: center; margin-top: 10px;">
+                    <span style="font-size: 9px; font-weight: 800; color: var(--secondary);">PRÓXIMO TURNO SUGERIDO:</span>
+                    <h3 id="suggestion-text" style="font-size: 16px; margin-top: 5px;">...</h3>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: HISTORIA -->
+        <!-- VISTA: HISTORIAL -->
         <div id="view-historial" class="view">
-            <h3 style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">CARGAR ANTERIORES</h3>
-            <div style="background: white; border-radius: 24px; padding: 25px; box-shadow: var(--shadow-soft);">
-                <select id="man-name" class="input-field">
+            <div class="monitor-card" style="border-top: 4px solid var(--accent);">
+                <h4 style="font-size: 12px; margin-bottom: 20px;">📅 CARGA DE PAGOS ANTERIORES</h4>
+                <select id="man-name" class="input-pro">
                     <option value="Ximena">Ximena</option>
                     <option value="Maycol">Maycol Avila</option>
                     <option value="Samuel">Samuel</option>
                     <option value="Oficial" class="official-name-display">Oficial</option>
                     <option value="Otro">Otro...</option>
                 </select>
-                <input type="text" id="man-other" class="input-field" placeholder="Concepto manual" style="display:none;">
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <input type="number" id="man-amount" class="input-field" placeholder="Monto Bs">
-                    <select id="man-cat" class="input-field">
+                <input type="text" id="man-other" class="input-pro" placeholder="Concepto manual" style="display:none;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="number" id="man-amount" class="input-pro" placeholder="Monto Bs">
+                    <select id="man-cat" class="input-pro">
                         <option value="Internet">Internet</option>
                         <option value="Agua">Agua</option>
+                        <option value="Oficial">Oficial</option>
                         <option value="Otro">Otro</option>
                     </select>
                 </div>
-                <input type="date" id="man-date" class="input-field">
-                <button class="btn-main" onclick="app.addManual()">GUARDAR REGISTRO</button>
+                <input type="date" id="man-date" class="input-pro">
+                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.addManual()">💾 GUARDAR EN HISTORIAL</button>
             </div>
-
-            <div id="log-container" style="margin-top: 25px;"></div>
+            <div id="log-container" style="padding: 0 20px;"></div>
         </div>
 
-        <!-- SECCIÓN: ESTADÍSTICAS -->
+        <!-- VISTA: CAJA Y REPORTES (RESTAURADA CON EL REPORTE) -->
         <div id="view-caja" class="view">
-            <div style="background: white; border-radius: 24px; padding: 25px; box-shadow: var(--shadow-soft); text-align: center; margin-bottom: 20px;">
-                <span style="font-size: 11px; font-weight: 800; color: var(--text-muted);">SALDO TOTAL</span>
-                <h1 id="total-balance" style="font-size: 36px; margin: 10px 0;">0.00 Bs</h1>
-                <div style="display: flex; justify-content: center; gap: 15px;">
-                    <div style="flex: 1; background: var(--bg-app); padding: 10px; border-radius: 15px;">
-                        <span style="font-size: 9px; font-weight: 800;">AGUA</span>
-                        <p id="fund-agua" style="font-weight: 800; color: var(--success);">0.00</p>
+            <div class="monitor-card" style="text-align: center; background: var(--grad-blue);">
+                <span style="font-size: 11px; font-weight: 800; opacity: 0.8;">SALDO TOTAL EN CAJA</span>
+                <h1 id="total-balance" style="font-size: 42px; font-family: 'JetBrains Mono'; margin: 15px 0;">0.00 Bs</h1>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <div style="flex:1; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 15px;">
+                        <span style="font-size: 9px; opacity: 0.8;">AGUA</span>
+                        <p id="fund-agua" style="font-weight: 800;">0.00</p>
                     </div>
-                    <div style="flex: 1; background: var(--bg-app); padding: 10px; border-radius: 15px;">
-                        <span style="font-size: 9px; font-weight: 800;">OTROS</span>
-                        <p id="fund-otro" style="font-weight: 800; color: var(--primary);">0.00</p>
+                    <div style="flex:1; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 15px;">
+                        <span style="font-size: 9px; opacity: 0.8;">OTROS</span>
+                        <p id="fund-otro" style="font-weight: 800;">0.00</p>
                     </div>
                 </div>
             </div>
 
-            <div style="background: white; border-radius: 24px; padding: 20px; box-shadow: var(--shadow-soft); height: 250px; margin-bottom: 20px;">
-                <canvas id="mainChart"></canvas>
-            </div>
+            <div style="padding: 0 20px;">
+                <button class="btn-action featured" style="width: 100%; text-align: center; background: var(--grad-green); margin-bottom: 20px;" onclick="app.settleInternet()">
+                    🌐 PAGAR INTERNET (179 Bs)
+                </button>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                    <div class="btn-action" style="text-align: center;" onclick="app.showFullReport()">
+                        <div class="icon-box" style="margin: 0 auto 10px;">📋</div>
+                        <span class="label-main">REPORTE WA</span>
+                    </div>
+                    <div class="btn-action" style="text-align: center;" onclick="app.backup()">
+                        <div class="icon-box" style="margin: 0 auto 10px;">💾</div>
+                        <span class="label-main">BACKUP DB</span>
+                    </div>
+                </div>
 
-            <button class="btn-main" style="background: var(--success); margin-bottom: 12px;" onclick="app.settleInternet()">
-                🌐 PAGAR MENSUALIDAD (179 Bs)
-            </button>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <button class="btn-main" style="background: white; color: var(--primary); border: 2px solid var(--primary-light); box-shadow: none;" onclick="app.showFullReport()">📋 REPORT WA</button>
-                <button class="btn-main" style="background: white; color: var(--primary); border: 2px solid var(--primary-light); box-shadow: none;" onclick="app.backup()">💾 BACKUP DB</button>
+                <div class="monitor-card" style="height: 300px; margin: 0;">
+                    <canvas id="mainChart"></canvas>
+                </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: PERFIL -->
+        <!-- VISTA: PERFIL -->
         <div id="view-config" class="view">
-            <div style="background: white; border-radius: 24px; padding: 25px; box-shadow: var(--shadow-soft);">
+            <div class="monitor-card">
+                <h4 style="font-size: 12px; margin-bottom: 20px;">👤 AJUSTES DE PERFIL</h4>
                 <div class="input-group">
-                    <label style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 8px; display: block;">NOMBRE OFICIAL</label>
-                    <input type="text" id="cfg-official" class="input-field">
+                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">NOMBRE OFICIAL ACTUAL</label>
+                    <input type="text" id="cfg-official" class="input-pro">
                 </div>
                 <div class="input-group">
-                    <label style="font-size: 11px; font-weight: 800; color: var(--text-muted); margin-bottom: 8px; display: block;">TU NOMBRE</label>
-                    <input type="text" id="cfg-admin" class="input-field">
+                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">NOMBRE ADMINISTRADOR</label>
+                    <input type="text" id="cfg-admin" class="input-pro">
                 </div>
-                <button class="btn-main" onclick="app.saveCfg()">ACTUALIZAR PERFIL</button>
+                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.saveCfg()">ACTUALIZAR DATOS</button>
             </div>
-            <button class="btn-main" style="background: #fff; color: var(--danger); border: 2px solid #fee2e2; margin-top: 20px; box-shadow: none;" onclick="app.wipe()">⚠️ REINICIAR TODO</button>
+            <div style="padding: 0 20px;">
+                <button class="btn-action" style="width: 100%; color: var(--danger); text-align: center; border-color: rgba(239, 68, 68, 0.2);" onclick="app.wipe()">⚠️ BORRAR TODO EL SISTEMA</button>
+            </div>
         </div>
-
     </main>
 
-    <!-- NAVEGACIÓN DOCK -->
-    <nav class="dock-nav">
-        <div class="nav-item active" onclick="app.nav('view-pagos', this)">
+    <nav class="nav-bar">
+        <div class="nav-link active" onclick="app.nav('view-pagos', this)">
             <i>💰</i><span>Pagos</span>
         </div>
-        <div class="nav-item" onclick="app.nav('view-historial', this)">
+        <div class="nav-link" onclick="app.nav('view-historial', this)">
             <i>📜</i><span>Historia</span>
         </div>
-        <div class="nav-item" onclick="app.nav('view-caja', this)">
-            <i>📊</i><span>Estadist</span>
+        <div class="nav-link" onclick="app.nav('view-caja', this)">
+            <i>📊</i><span>Caja</span>
         </div>
-        <div class="nav-item" onclick="app.nav('view-config', this)">
+        <div class="nav-link" onclick="app.nav('view-config', this)">
             <i>👤</i><span>Perfil</span>
         </div>
     </nav>
 
     <!-- MODALES -->
-    <div id="modal-edit" class="modal">
-        <div class="modal-content">
-            <h2 style="font-size: 18px; margin-bottom: 20px;">Editar Pago</h2>
+    <div id="modal-edit" class="modal-box">
+        <div class="modal-in">
+            <h2 style="font-size: 18px; margin-bottom: 20px;">✏️ Editar Registro</h2>
             <input type="hidden" id="edit-id">
-            <input type="text" id="edit-n" class="input-field">
-            <input type="number" id="edit-a" class="input-field">
-            <input type="date" id="edit-d" class="input-field">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <button class="btn-main" style="background: #eee; color: #333;" onclick="app.closeEdit()">SALIR</button>
-                <button class="btn-main" onclick="app.saveEdit()">GUARDAR</button>
+            <input type="text" id="edit-n" class="input-pro" placeholder="Nombre">
+            <input type="number" id="edit-a" class="input-pro" placeholder="Monto">
+            <input type="date" id="edit-d" class="input-pro">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+                <button class="btn-action" style="text-align: center;" onclick="app.closeEdit()">SALIR</button>
+                <button class="btn-action featured" style="text-align: center;" onclick="app.saveEdit()">LISTO</button>
             </div>
-            <button class="btn-main" style="background: #fff; color: var(--danger); border: none; font-size: 11px;" onclick="app.delete()">BORRAR DEFINITIVO</button>
+            <button class="btn-action" style="width: 100%; color: var(--danger); text-align: center; margin-top: 15px; font-size: 11px;" onclick="app.delete()">ELIMINAR PERMANENTE</button>
         </div>
     </div>
 
-    <div id="modal-report" class="modal">
-        <div class="modal-content">
-            <h2 style="font-size: 18px; margin-bottom: 15px;">Reporte WhatsApp</h2>
-            <div id="report-area" style="background: var(--bg-app); padding: 15px; border-radius: 15px; font-size: 12px; margin-bottom: 20px; white-space: pre-wrap;"></div>
-            <button class="btn-main" style="background: #25d366;" onclick="app.shareWA()">📲 COMPARTIR AHORA</button>
-            <button class="btn-main" style="background: #eee; color: #333; margin-top: 10px;" onclick="app.closeReport()">CERRAR</button>
+    <div id="modal-report" class="modal-box">
+        <div class="modal-in" style="max-width: 450px;">
+            <h2 style="font-size: 18px; margin-bottom: 15px;">📋 Reporte Generado</h2>
+            <div id="report-area" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; font-size: 13px; font-family: 'JetBrains Mono'; white-space: pre-wrap; margin-bottom: 20px; border: 1px solid var(--border); max-height: 300px; overflow-y: auto;"></div>
+            <button class="btn-action featured" style="width: 100%; text-align: center; background: #25d366;" onclick="app.shareWA()">📲 ENVIAR POR WHATSAPP</button>
+            <button class="btn-action" style="width: 100%; text-align: center; margin-top: 10px;" onclick="app.closeReport()">CERRAR</button>
         </div>
     </div>
 
     <script src="script.js"></script>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
 </body>
 </html>

@@ -1,12 +1,12 @@
 /**
- * OFICINA SMART V5 - MOBILE EDITION
- * Lógica optimizada para App de Celular
+ * OFICINA PRO V6 - INFINITY AURORA
+ * Restauración completa de funciones y diseño de alto impacto
  */
 
 const app = {
     // --- ESTADO ---
-    db: JSON.parse(localStorage.getItem('oficina_v5_db')) || [],
-    config: JSON.parse(localStorage.getItem('oficina_v5_cfg')) || {
+    db: JSON.parse(localStorage.getItem('oficina_v6_db')) || [],
+    config: JSON.parse(localStorage.getItem('oficina_v6_cfg')) || {
         officialName: 'Nilsa',
         adminName: 'Maycol Avila',
         internetTarget: 179
@@ -15,24 +15,35 @@ const app = {
 
     // --- INICIO ---
     init() {
-        // Cargar config inicial
+        this.updateClock();
+        setInterval(() => this.updateClock(), 1000);
+        
+        // Cargar config
         document.getElementById('cfg-official').value = this.config.officialName;
         document.getElementById('cfg-admin').value = this.config.adminName;
         document.getElementById('man-date').valueAsDate = new Date();
         
-        // Listener para 'Otro'
+        // Listener manual
         document.getElementById('man-name').addEventListener('change', (e) => {
             document.getElementById('man-other').style.display = e.target.value === 'Otro' ? 'block' : 'none';
         });
 
         this.sync();
-        console.log("OFICINA SMART V5 LISTO");
+        console.log("OFICINA V6 INFINITY LISTO");
+    },
+
+    updateClock() {
+        const now = new Date();
+        const clockEl = document.getElementById('clock');
+        const dateEl = document.getElementById('date');
+        if(clockEl) clockEl.innerText = now.toLocaleTimeString();
+        if(dateEl) dateEl.innerText = now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' });
     },
 
     // --- NAVEGACIÓN ---
     nav(viewId, btn) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
         
         document.getElementById(viewId).classList.add('active');
         btn.classList.add('active');
@@ -41,7 +52,7 @@ const app = {
         window.scrollTo(0,0);
     },
 
-    // --- LÓGICA DE PAGOS ---
+    // --- LÓGICA DE NEGOCIO ---
     action(nombre, monto, tipo, esOficial = false) {
         const finalName = esOficial ? this.config.officialName : nombre;
         this.saveEntry({
@@ -49,7 +60,12 @@ const app = {
             n: finalName, a: parseFloat(monto), t: tipo,
             d: new Date().toISOString().split('T')[0], ts: Date.now()
         });
-        alert(`✅ Registrado: ${finalName}`);
+        this.showToast(`✅ +${monto} Bs: ${finalName}`);
+    },
+
+    showToast(msg) {
+        // Usar alert temporal mientras se decide si poner un toast UI
+        console.log(msg);
     },
 
     addManual() {
@@ -72,12 +88,12 @@ const app = {
 
         document.getElementById('man-amount').value = '';
         document.getElementById('man-other').value = '';
-        alert("✅ Registro guardado");
+        alert("✅ Registro guardado en historial");
     },
 
     saveEntry(entry) {
         this.db.push(entry);
-        localStorage.setItem('oficina_v5_db', JSON.stringify(this.db));
+        localStorage.setItem('oficina_v6_db', JSON.stringify(this.db));
         this.sync();
     },
 
@@ -88,39 +104,45 @@ const app = {
         const aguaBalance = this.db.filter(i => i.t === 'Agua').reduce((acc, i) => acc + i.a, 0);
         const otroBalance = total - internetBalance - aguaBalance;
 
-        // Actualizar UI General
+        // Totales
         document.getElementById('total-balance').innerText = total.toFixed(2) + " Bs";
         document.getElementById('fund-agua').innerText = aguaBalance.toFixed(2);
         document.getElementById('fund-otro').innerText = otroBalance.toFixed(2);
         
         // Perfil
         document.querySelectorAll('.official-name-display').forEach(el => el.innerText = this.config.officialName);
-        document.getElementById('header-user').innerText = this.config.adminName;
-        document.getElementById('header-avatar').innerText = this.config.adminName.substring(0,2).toUpperCase();
+        document.getElementById('h-user').innerText = this.config.adminName;
+        document.getElementById('h-avatar').innerText = this.config.adminName.substring(0,2).toUpperCase();
 
-        // --- MONITOR INTERNET (WIDGET) ---
+        // --- MONITOR INTERNET ---
         const target = this.config.internetTarget;
         const porc = Math.min((internetBalance / target) * 100, 100);
         
-        document.getElementById('internet-bs').innerText = internetBalance.toFixed(2) + " Bs";
-        document.getElementById('internet-porc').innerText = Math.floor(porc) + "%";
-        document.getElementById('internet-bar').style.width = porc + "%";
+        document.getElementById('int-bs').innerText = internetBalance.toFixed(2) + " Bs";
+        document.getElementById('int-perc').innerText = Math.floor(porc) + "%";
+        document.getElementById('int-bar').style.width = porc + "%";
 
-        const statusText = document.getElementById('internet-status');
+        const statusIcon = document.getElementById('int-icon');
+        const statusText = document.getElementById('int-text');
+
         if (internetBalance >= target) {
-            statusText.innerText = "✅ ¡FONDO COMPLETADO!";
-            statusText.style.color = "var(--success)";
+            statusIcon.innerText = "✅";
+            statusText.innerText = "¡FONDO LISTO PARA PAGAR!";
+            statusText.style.color = "var(--secondary)";
+            document.getElementById('int-bar').style.background = "var(--grad-green)";
         } else {
             const faltante = target - internetBalance;
-            statusText.innerText = `⏳ Faltan ${faltante.toFixed(2)} Bs para el mes`;
-            statusText.style.color = "var(--text-muted)";
+            statusIcon.innerText = "⏳";
+            statusText.innerText = `Faltan ${faltante.toFixed(2)} Bs para el mes`;
+            statusText.style.color = "var(--text-dim)";
+            document.getElementById('int-bar').style.background = "var(--grad-blue)";
         }
 
         // Sugerencia Agua
         const ultAgua = this.db.filter(i => i.t === 'Agua').sort((a,b) => b.ts - a.ts)[0];
-        let sugerido = "Oficial / Maycol";
+        let sugerido = "OFICIAL / MAYCOL";
         if(ultAgua && (ultAgua.n.toUpperCase().includes('MAYCOL') || ultAgua.n.toUpperCase().includes('OFICIAL'))) {
-            sugerido = "Samuel / Ximena";
+            sugerido = "SAMUEL / XIMENA";
         }
         document.getElementById('suggestion-text').innerText = sugerido;
 
@@ -130,33 +152,29 @@ const app = {
     renderLogs() {
         const container = document.getElementById('log-container');
         if(!container) return;
-        container.innerHTML = '<h3 style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">HISTORIAL RECIENTE</h3>';
+        container.innerHTML = '<h3 style="font-size: 11px; color: var(--text-dim); margin-bottom: 15px; letter-spacing: 1px;">ÚLTIMOS MOVIMIENTOS</h3>';
         
-        const sorted = [...this.db].sort((a,b) => b.ts - a.ts).slice(0, 10);
+        const sorted = [...this.db].sort((a,b) => b.ts - a.ts).slice(0, 15);
         sorted.forEach(item => {
             const isPos = item.a >= 0;
             const div = document.createElement('div');
-            div.style.background = "white";
-            div.style.borderRadius = "20px";
-            div.style.padding = "15px";
+            div.className = 'btn-action';
             div.style.marginBottom = "10px";
             div.style.display = "flex";
             div.style.justifyContent = "space-between";
             div.style.alignItems = "center";
-            div.style.boxShadow = "var(--shadow-soft)";
+            div.style.padding = "15px 20px";
             div.onclick = () => this.openEdit(item.id);
 
             div.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-size: 18px;">
-                        ${this.getIcon(item.t)}
-                    </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="font-size: 20px;">${this.getIcon(item.t)}</div>
                     <div>
-                        <div style="font-size: 13px; font-weight: 800;">${item.n}</div>
-                        <div style="font-size: 10px; color: var(--text-muted);">${item.d}</div>
+                        <div style="font-size: 14px; font-weight: 800;">${item.n}</div>
+                        <div style="font-size: 10px; color: var(--text-dim);">${item.d} • ${item.t}</div>
                     </div>
                 </div>
-                <div style="font-weight: 800; color: ${isPos ? 'var(--success)' : 'var(--danger)'}">
+                <div style="font-family: 'JetBrains Mono'; font-weight: 800; color: ${isPos ? 'var(--secondary)' : 'var(--danger)'}">
                     ${isPos ? '+' : ''}${item.a.toFixed(2)}
                 </div>
             `;
@@ -167,21 +185,22 @@ const app = {
     getIcon(t) {
         if(t === 'Internet') return '🌐';
         if(t === 'Agua') return '💧';
+        if(t === 'Oficial') return '⚖️';
         return '📝';
     },
 
     // --- ACCIONES DE CAJA ---
     settleInternet() {
         const current = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
-        if(current < 179) return alert("❌ Saldo insuficiente");
+        if(current < 179) return alert("❌ Saldo insuficiente para pagar los 179 Bs");
 
-        if(confirm("¿Pagar internet de este mes (179 Bs)?")) {
+        if(confirm("¿Confirmas el pago de internet de 179 Bs?")) {
             this.saveEntry({
                 id: 'OUT-' + Date.now(),
-                n: 'PAGO MES INTERNET', a: -179, t: 'Internet',
+                n: 'PAGO MENSUAL INTERNET', a: -179, t: 'Internet',
                 d: new Date().toISOString().split('T')[0], ts: Date.now()
             });
-            alert("🌐 Pago registrado");
+            alert("🌐 Pago realizado con éxito");
         }
     },
 
@@ -209,17 +228,17 @@ const app = {
         this.db[idx].d = document.getElementById('edit-d').value;
         this.db[idx].ts = new Date(this.db[idx].d).getTime();
 
-        localStorage.setItem('oficina_v5_db', JSON.stringify(this.db));
+        localStorage.setItem('oficina_v6_db', JSON.stringify(this.db));
         this.sync();
         this.closeEdit();
-        alert("✅ Actualizado");
+        alert("✅ Cambios guardados");
     },
 
     delete() {
         const id = document.getElementById('edit-id').value;
-        if(confirm("¿Eliminar registro?")) {
+        if(confirm("¿Eliminar este registro permanentemente?")) {
             this.db = this.db.filter(i => i.id !== id);
-            localStorage.setItem('oficina_v5_db', JSON.stringify(this.db));
+            localStorage.setItem('oficina_v6_db', JSON.stringify(this.db));
             this.sync();
             this.closeEdit();
             alert("🗑️ Eliminado");
@@ -232,12 +251,20 @@ const app = {
         const intB = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
         const aguB = this.db.filter(i => i.t === 'Agua').reduce((acc, i) => acc + i.a, 0);
         
-        let msg = `🏠 *REPORTE SMART OFICINA*\n`;
-        msg += `💰 SALDO TOTAL: ${total.toFixed(2)} Bs\n`;
+        let msg = `🌌 *REPORTE OFICINA INFINITY*\n`;
+        msg += `---------------------------\n`;
+        msg += `💰 SALDO TOTAL: ${total.toFixed(2)} Bs\n\n`;
         msg += `🌐 INTERNET: ${intB.toFixed(2)} / 179 Bs\n`;
         msg += `💧 AGUA: ${aguB.toFixed(2)} Bs\n`;
         msg += `---------------------------\n`;
-        msg += `👤 Administrador: ${this.config.adminName}`;
+        msg += `📜 *ÚLTIMOS MOVIMIENTOS:*\n`;
+        
+        const logs = [...this.db].sort((a,b) => b.ts - a.ts).slice(0, 5);
+        logs.forEach(l => {
+            msg += `• ${l.n}: ${l.a > 0 ? '+' : ''}${l.a} Bs (${l.t})\n`;
+        });
+        
+        msg += `\n_Generado por ${this.config.adminName}_`;
         
         document.getElementById('report-area').innerText = msg;
         document.getElementById('modal-report').style.display = 'flex';
@@ -254,17 +281,17 @@ const app = {
     saveCfg() {
         this.config.officialName = document.getElementById('cfg-official').value || 'Oficial';
         this.config.adminName = document.getElementById('cfg-admin').value || 'Admin';
-        localStorage.setItem('oficina_v5_cfg', JSON.stringify(this.config));
+        localStorage.setItem('oficina_v6_cfg', JSON.stringify(this.config));
         this.sync();
-        alert("✅ Configuración guardada");
+        alert("✅ Datos actualizados");
     },
 
     wipe() {
-        if(confirm("¿REINICIAR SISTEMA?")) {
+        if(confirm("¿BORRAR TODA LA BASE DE DATOS? No podrás recuperar nada.")) {
             this.db = [];
-            localStorage.removeItem('oficina_v5_db');
+            localStorage.removeItem('oficina_v6_db');
             this.sync();
-            alert("🧹 Limpio");
+            alert("🧹 Sistema reiniciado");
         }
     },
 
@@ -273,7 +300,7 @@ const app = {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `oficina_v5_backup.json`;
+        a.download = `backup_oficina_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
     },
 
@@ -293,7 +320,7 @@ const app = {
                 labels: ['Internet', 'Agua', 'Otros'],
                 datasets: [{
                     data: [intB, aguB, otros],
-                    backgroundColor: ['#5c67f2', '#55efc4', '#eef0ff'],
+                    backgroundColor: ['#6366f1', '#10b981', '#7c3aed'],
                     borderWidth: 0,
                     hoverOffset: 15
                 }]
@@ -302,7 +329,7 @@ const app = {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'bottom', labels: { color: '#636e72', font: { weight: '700' } } }
+                    legend: { position: 'bottom', labels: { color: '#94a3b8', font: { weight: '800' } } }
                 },
                 cutout: '80%'
             }
