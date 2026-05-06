@@ -1,11 +1,11 @@
 /**
- * OFICINA PRO V7 - FINAL
- * Soporte para ciclos de agua editables, reportes visuales y persistencia local explicada.
+ * OFICINA PRO V8 - SUPER MARIO ODYSSEY EDITION
+ * Diversión, botellones visuales y confirmaciones de Mario.
  */
 
 const app = {
-    db: JSON.parse(localStorage.getItem('oficina_v7_db')) || [],
-    config: JSON.parse(localStorage.getItem('oficina_v7_cfg')) || {
+    db: JSON.parse(localStorage.getItem('oficina_v8_db')) || [],
+    config: JSON.parse(localStorage.getItem('oficina_v8_cfg')) || {
         officialName: 'Nilsa',
         adminName: 'Maycol Avila',
         internetTarget: 179,
@@ -13,12 +13,12 @@ const app = {
         turn2: 'SAMUEL / XIMENA'
     },
     chart: null,
+    trendChart: null,
 
     init() {
         this.updateClock();
         setInterval(() => this.updateClock(), 1000);
         
-        // Cargar config en inputs
         document.getElementById('cfg-official').value = this.config.officialName;
         document.getElementById('cfg-admin').value = this.config.adminName;
         document.getElementById('cfg-turn1').value = this.config.turn1;
@@ -43,8 +43,14 @@ const app = {
         document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         btn.classList.add('active');
-        if(viewId === 'view-caja') setTimeout(() => this.renderChart(), 100);
+        if(viewId === 'view-caja') setTimeout(() => { this.renderChart(); this.renderTrendChart(); }, 100);
         window.scrollTo(0,0);
+    },
+
+    showConfirm() {
+        const pop = document.getElementById('confirm-pop');
+        pop.classList.add('show');
+        setTimeout(() => pop.classList.remove('show'), 1500);
     },
 
     action(nombre, monto, tipo, esOficial = false) {
@@ -54,6 +60,7 @@ const app = {
             n: finalName, a: parseFloat(monto), t: tipo,
             d: new Date().toISOString().split('T')[0], ts: Date.now()
         });
+        this.showConfirm();
     },
 
     addManual() {
@@ -62,33 +69,29 @@ const app = {
         const monto = parseFloat(document.getElementById('man-amount').value);
         const cat = document.getElementById('man-cat').value;
         const date = document.getElementById('man-date').value;
-
         if(!monto || !date) return alert("⚠️ Datos incompletos");
-
         let finalName = selName === 'Oficial' ? this.config.officialName : (selName === 'Otro' ? (otherName || 'Varios') : selName);
-
         this.saveEntry({
             id: 'MAN-' + Date.now(),
             n: finalName, a: monto, t: cat, d: date, ts: new Date(date).getTime()
         });
         document.getElementById('man-amount').value = '';
+        this.showConfirm();
     },
 
     saveEntry(entry) {
         this.db.push(entry);
-        localStorage.setItem('oficina_v7_db', JSON.stringify(this.db));
+        localStorage.setItem('oficina_v8_db', JSON.stringify(this.db));
         this.sync();
     },
 
     sync() {
         const total = this.db.reduce((acc, i) => acc + i.a, 0);
         const intB = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
-        const aguB = this.db.filter(i => i.t === 'Agua').reduce((acc, i) => acc + i.a, 0);
-        const otroB = total - intB - aguB;
-
+        const aguEntries = this.db.filter(i => i.t === 'Agua' && i.a > 0).length;
+        
         document.getElementById('total-balance').innerText = total.toFixed(2) + " Bs";
-        document.getElementById('fund-agua').innerText = aguB.toFixed(2);
-        document.getElementById('fund-otro').innerText = otroB.toFixed(2);
+        document.getElementById('fund-otro').innerText = (total - intB).toFixed(2);
         
         document.querySelectorAll('.official-name-display').forEach(el => el.innerText = this.config.officialName);
         document.getElementById('h-user').innerText = this.config.adminName;
@@ -100,20 +103,34 @@ const app = {
         document.getElementById('int-bs').innerText = intB.toFixed(2) + " Bs";
         document.getElementById('int-perc').innerText = Math.floor(porc) + "%";
         document.getElementById('int-bar').style.width = porc + "%";
-
-        const statusIcon = document.getElementById('int-icon');
         const statusText = document.getElementById('int-text');
-        if (intB >= target) {
-            statusIcon.innerText = "✅"; statusText.innerText = "¡FONDO LISTO!";
-            statusText.style.color = "var(--secondary)";
-            document.getElementById('int-bar').style.background = "var(--grad-green)";
+        statusText.innerText = intB >= target ? "¡MÁXIMA POTENCIA! FONDO LISTO" : `Faltan ${(target-intB).toFixed(2)} monedas`;
+
+        // --- LÓGICA BOTELLONES MARIO ---
+        // Asumimos que 2 personas = 2 botellones. 
+        // Cada registro de "Agua" de 36 Bs llena 1 botellón.
+        const numBotellones = aguEntries % 2; 
+        const totalPagosCiclo = aguEntries;
+        
+        const b1 = document.getElementById('bot-1');
+        const b2 = document.getElementById('bot-2');
+        const bText = document.getElementById('bottle-text');
+
+        // Reset
+        b1.classList.remove('full');
+        b2.classList.remove('full');
+
+        if(totalPagosCiclo % 2 === 1) {
+            b1.classList.add('full');
+            bText.innerText = "¡Falta 1 botellón! 🥤";
+        } else if(totalPagosCiclo > 0 && totalPagosCiclo % 2 === 0) {
+            b1.classList.add('full');
+            b2.classList.add('full');
+            bText.innerText = "¡ESTAMOS LLENOS! 🥤🥤";
         } else {
-            statusIcon.innerText = "⏳"; statusText.innerText = `Faltan ${(target - intB).toFixed(2)} Bs`;
-            statusText.style.color = "var(--text-dim)";
-            document.getElementById('int-bar').style.background = "var(--grad-blue)";
+            bText.innerText = "Faltan 2 botellones";
         }
 
-        // --- LÓGICA DE TURNOS EDITABLES ---
         const ultAgua = this.db.filter(i => i.t === 'Agua').sort((a,b) => b.ts - a.ts)[0];
         let sugerido = this.config.turn1;
         if(ultAgua && (ultAgua.n.toUpperCase().includes(this.config.officialName.toUpperCase()) || ultAgua.n.toUpperCase().includes('MAYCOL'))) {
@@ -130,19 +147,13 @@ const app = {
     renderVisualReport() {
         const container = document.getElementById('visual-report-container');
         if(!container) return;
-        
         const summary = {};
-        this.db.forEach(item => {
-            if(item.a > 0) {
-                summary[item.n] = (summary[item.n] || 0) + item.a;
-            }
-        });
-
-        let html = `<div style="margin-top:20px;"><h4 style="font-size:11px; color:var(--text-dim); margin-bottom:10px;">📊 RESUMEN DE APORTES POR PERSONA</h4>`;
+        this.db.forEach(item => { if(item.a > 0) summary[item.n] = (summary[item.n] || 0) + item.a; });
+        let html = `<div style="margin-top:10px;"><h4 style="font-size:10px; color:var(--text-dim); margin-bottom:10px; text-transform:uppercase;">📊 APORTES DE NIVEL</h4>`;
         for (let name in summary) {
-            html += `<div style="display:flex; justify-content:space-between; padding:10px; background:rgba(255,255,255,0.03); border-radius:12px; margin-bottom:5px; font-size:13px;">
+            html += `<div style="display:flex; justify-content:space-between; padding:12px; background:rgba(255,255,255,0.03); border-radius:15px; margin-bottom:8px; font-size:13px; border-left: 4px solid var(--mario-yellow);">
                 <span style="font-weight:700;">${name}</span>
-                <span style="color:var(--secondary); font-weight:800;">${summary[name].toFixed(2)} Bs</span>
+                <span style="color:var(--mario-yellow); font-weight:800;">${summary[name].toFixed(2)} Bs</span>
             </div>`;
         }
         html += `</div>`;
@@ -152,7 +163,7 @@ const app = {
     renderLogs() {
         const container = document.getElementById('log-container');
         if(!container) return;
-        container.innerHTML = '<h3 style="font-size: 11px; color: var(--text-dim); margin-bottom: 15px;">ÚLTIMOS MOVIMIENTOS</h3>';
+        container.innerHTML = '<h3 style="font-size: 10px; color: var(--text-dim); margin-bottom: 15px; text-transform:uppercase;">LIBRO DE AVENTURAS</h3>';
         const sorted = [...this.db].sort((a,b) => b.ts - a.ts).slice(0, 15);
         sorted.forEach(item => {
             const isPos = item.a >= 0;
@@ -161,18 +172,19 @@ const app = {
             div.style.marginBottom = "10px"; div.style.display = "flex"; div.style.justifyContent = "space-between";
             div.style.alignItems = "center"; div.style.padding = "15px 20px";
             div.onclick = () => this.openEdit(item.id);
-            div.innerHTML = `<div style="display: flex; align-items: center; gap: 15px;"><div style="font-size: 20px;">${this.getIcon(item.t)}</div><div><div style="font-size: 14px; font-weight: 800;">${item.n}</div><div style="font-size: 10px; color: var(--text-dim);">${item.d}</div></div></div><div style="font-family: 'JetBrains Mono'; font-weight: 800; color: ${isPos ? 'var(--secondary)' : 'var(--danger)'}">${isPos ? '+' : ''}${item.a.toFixed(2)}</div>`;
+            div.innerHTML = `<div style="display: flex; align-items: center; gap: 15px;"><div style="font-size: 20px;">${this.getIcon(item.t)}</div><div><div style="font-size: 14px; font-weight: 800;">${item.n}</div><div style="font-size: 10px; color: var(--text-dim);">${item.d}</div></div></div><div style="font-family: 'JetBrains Mono'; font-weight: 800; color: ${isPos ? 'var(--mario-green)' : 'var(--mario-red)'}">${isPos ? '+' : ''}${item.a.toFixed(2)}</div>`;
             container.appendChild(div);
         });
     },
 
-    getIcon(t) { return t === 'Internet' ? '🌐' : (t === 'Agua' ? '💧' : (t === 'Oficial' ? '⚖️' : '📝')); },
+    getIcon(t) { return t === 'Internet' ? '🍄' : (t === 'Agua' ? '🥤' : (t === 'Oficial' ? '🌟' : '📝')); },
 
     settleInternet() {
         const current = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
-        if(current < 179) return alert("❌ Saldo insuficiente");
-        if(confirm("¿Pagar internet de 179 Bs?")) {
-            this.saveEntry({ id: 'OUT-' + Date.now(), n: 'PAGO MES INTERNET', a: -179, t: 'Internet', d: new Date().toISOString().split('T')[0], ts: Date.now() });
+        if(current < 179) return alert("❌ No tienes suficientes monedas");
+        if(confirm("¿Pagar el castillo (internet) por 179 Bs?")) {
+            this.saveEntry({ id: 'OUT-' + Date.now(), n: 'PAGO CASTILLO INTERNET', a: -179, t: 'Internet', d: new Date().toISOString().split('T')[0], ts: Date.now() });
+            this.showConfirm();
         }
     },
 
@@ -197,24 +209,23 @@ const app = {
         this.db[idx].a = (isNeg ? -1 : 1) * parseFloat(document.getElementById('edit-a').value);
         this.db[idx].d = document.getElementById('edit-d').value;
         this.db[idx].ts = new Date(this.db[idx].d).getTime();
-        localStorage.setItem('oficina_v7_db', JSON.stringify(this.db));
-        this.sync(); this.closeEdit();
+        localStorage.setItem('oficina_v8_db', JSON.stringify(this.db));
+        this.sync(); this.closeEdit(); this.showConfirm();
     },
 
     delete() {
         const id = document.getElementById('edit-id').value;
-        if(confirm("¿Eliminar registro?")) {
+        if(confirm("¿Borrar bloque?")) {
             this.db = this.db.filter(i => i.id !== id);
-            localStorage.setItem('oficina_v7_db', JSON.stringify(this.db));
-            this.sync(); this.closeEdit();
+            localStorage.setItem('oficina_v8_db', JSON.stringify(this.db));
+            this.sync(); this.closeEdit(); this.showConfirm();
         }
     },
 
     showFullReport() {
         const total = this.db.reduce((acc, i) => acc + i.a, 0);
         const intB = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
-        const aguB = this.db.filter(i => i.t === 'Agua').reduce((acc, i) => acc + i.a, 0);
-        let msg = `🌌 *REPORTE OFICINA V7*\n💰 TOTAL: ${total.toFixed(2)} Bs\n🌐 INTERNET: ${intB.toFixed(2)} / 179\n💧 AGUA: ${aguB.toFixed(2)}\n---------------------------\n`;
+        let msg = `🍄 *SUPER REPORTE OFICINA*\n🪙 MONEDAS: ${total.toFixed(2)}\n🌐 INTERNET: ${intB.toFixed(2)}/179\n---------------------------\n`;
         this.db.slice(-5).forEach(l => msg += `• ${l.n}: ${l.a} Bs\n`);
         document.getElementById('report-area').innerText = msg;
         document.getElementById('modal-report').style.display = 'flex';
@@ -228,16 +239,49 @@ const app = {
         this.config.adminName = document.getElementById('cfg-admin').value || 'Admin';
         this.config.turn1 = document.getElementById('cfg-turn1').value || 'OFICIAL / MAYCOL';
         this.config.turn2 = document.getElementById('cfg-turn2').value || 'SAMUEL / XIMENA';
-        localStorage.setItem('oficina_v7_cfg', JSON.stringify(this.config));
-        this.sync(); alert("✅ Configuración actualizada");
+        localStorage.setItem('oficina_v8_cfg', JSON.stringify(this.config));
+        this.sync(); this.showConfirm();
     },
 
-    wipe() { if(confirm("¿REINICIAR TODO?")) { this.db = []; localStorage.removeItem('oficina_v7_db'); this.sync(); } },
-    resetWater() { if(confirm("¿Reiniciar turnos agua?")) { this.db = this.db.filter(i => i.t !== 'Agua'); localStorage.setItem('oficina_v7_db', JSON.stringify(this.db)); this.sync(); } },
+    wipe() { if(confirm("¿GAME OVER? Se borrará todo.")) { this.db = []; localStorage.removeItem('oficina_v8_db'); this.sync(); this.showConfirm(); } },
+    resetWater() { if(confirm("¿Reiniciar botellones?")) { this.db = this.db.filter(i => i.t !== 'Agua'); localStorage.setItem('oficina_v8_db', JSON.stringify(this.db)); this.sync(); this.showConfirm(); } },
     backup() {
         const blob = new Blob([JSON.stringify(this.db)], {type: 'application/json'});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-        a.download = `backup_v7_${new Date().toISOString().split('T')[0]}.json`; a.click();
+        a.download = `mario_oficina_v8.json`; a.click();
+    },
+
+    renderChart() {
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const intB = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
+        const total = this.db.reduce((acc, i) => acc + i.a, 0);
+        const otros = total - intB;
+        if(this.chart) this.chart.destroy();
+        this.chart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Internet', 'Otros'],
+                datasets: [{ data: [intB, otros], backgroundColor: ['#007cc3', '#e62423'], borderWidth: 0, hoverOffset: 15 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', font: { weight: '800' } } } }, cutout: '80%' }
+        });
+    },
+
+    renderTrendChart() {
+        const ctx = document.getElementById('trendChart').getContext('2d');
+        const sorted = [...this.db].sort((a,b) => a.ts - b.ts).slice(-7);
+        const labels = sorted.map(i => i.d.split('-').slice(1).join('/'));
+        let curr = this.db.reduce((acc, i) => acc + i.a, 0) - sorted.reduce((acc, i) => acc + i.a, 0);
+        const balances = sorted.map(i => { curr += i.a; return curr; });
+        if(this.trendChart) this.trendChart.destroy();
+        this.trendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{ label: 'Bs', data: balances, borderColor: '#facd00', backgroundColor: 'rgba(250, 205, 0, 0.1)', fill: true, tension: 0.4 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { display: false } }, plugins: { legend: { display: false } } }
+        });
     }
 };
 

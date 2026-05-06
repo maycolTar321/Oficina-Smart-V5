@@ -1,15 +1,16 @@
 :root {
-    --bg: #070b14;
-    --card: rgba(255, 255, 255, 0.05);
-    --border: rgba(255, 255, 255, 0.1);
-    --primary: #6366f1;
-    --secondary: #10b981;
-    --accent: #8b5cf6;
+    --bg: #0b0f1a;
+    --card: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.08);
+    --mario-red: #e62423;
+    --mario-blue: #007cc3;
+    --mario-yellow: #facd00;
+    --mario-green: #43b02a;
     --text: #ffffff;
     --text-dim: #94a3b8;
-    --grad-blue: linear-gradient(135deg, #4f46e5, #6366f1);
-    --grad-green: linear-gradient(135deg, #059669, #10b981);
-    --grad-purple: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    --primary: var(--mario-blue);
+    --secondary: var(--mario-green);
+    --accent: var(--mario-red);
 }
 
 * {
@@ -23,70 +24,93 @@ body {
     color: var(--text);
     min-height: 100vh;
     padding-bottom: 100px;
-    overflow-x: hidden;
 }
 
-/* --- Fondo de Luces Animadas --- */
+/* --- Fondo Mario Pro --- */
 body::before {
     content: '';
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 40%);
+    background: radial-gradient(circle at 10% 10%, rgba(230, 36, 35, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(0, 124, 195, 0.1) 0%, transparent 40%);
     z-index: -1;
 }
 
-/* --- Header de Impacto --- */
 .header-v6 {
-    padding: 50px 25px 30px;
+    padding: 40px 25px 20px;
     display: flex; justify-content: space-between; align-items: center;
-}
-
-.user-tag {
-    display: flex; align-items: center; gap: 12px;
 }
 
 .avatar-v6 {
     width: 45px; height: 45px;
-    background: var(--grad-blue);
-    border-radius: 14px;
+    background: var(--mario-red);
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 18px;
-    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 5px 15px rgba(230, 36, 35, 0.4);
 }
 
-/* --- Widget de Progreso (Monitor) --- */
+/* --- MONITOR BOTELLONES MARIO --- */
+.mario-water-card {
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    margin: 0 20px 20px;
+    border-radius: 24px;
+    padding: 20px;
+    display: flex; align-items: center; gap: 15px;
+    position: relative; overflow: hidden;
+}
+
+.bottles-visual {
+    display: flex; gap: 10px;
+}
+
+.bottle {
+    width: 35px; height: 50px;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.bottle::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
+    background: linear-gradient(transparent, #00d2ff);
+    transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bottle.full::before { height: 100%; }
+.bottle.full { border-color: #00d2ff; box-shadow: 0 0 10px #00d2ff; }
+
+/* --- MONITOR INTERNET --- */
 .monitor-card {
     background: var(--card);
     backdrop-filter: blur(20px);
     border: 1px solid var(--border);
     margin: 0 20px 25px;
-    border-radius: 28px;
-    padding: 22px;
-}
-
-.progress-label {
-    font-size: 10px; font-weight: 800; color: var(--text-dim);
-    text-transform: uppercase; letter-spacing: 1.5px;
+    border-radius: 24px;
+    padding: 20px;
 }
 
 .progress-bs {
-    font-size: 28px; font-weight: 800; margin: 8px 0;
+    font-size: 28px; font-weight: 800; margin: 5px 0;
     font-family: 'JetBrains Mono', monospace;
 }
 
 .bar-bg {
-    height: 10px; background: rgba(255,255,255,0.05);
+    height: 8px; background: rgba(255,255,255,0.05);
     border-radius: 10px; margin: 12px 0; overflow: hidden;
 }
 
 .bar-fill {
     height: 100%; width: 0%;
-    background: var(--grad-blue);
-    box-shadow: 0 0 15px var(--primary);
-    transition: 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    background: var(--mario-blue);
+    box-shadow: 0 0 15px var(--mario-blue);
+    transition: 1s;
 }
 
-/* --- Botones de Acción (EL CORAZÓN) --- */
+/* --- BOTONES MARIO --- */
 .action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -97,48 +121,50 @@ body::before {
 .btn-action {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 20px;
+    border-radius: 20px;
+    padding: 18px;
     color: white;
-    text-align: left;
     transition: 0.2s;
     cursor: pointer;
     position: relative;
-    overflow: hidden;
 }
 
-.btn-action:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+.btn-action:active { transform: scale(0.92); }
 
 .btn-action.featured {
     grid-column: span 2;
-    background: var(--grad-purple);
+    background: var(--mario-red);
     border: none;
-    box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 8px 20px rgba(230, 36, 35, 0.3);
+}
+
+.btn-action.water-btn {
+    background: var(--mario-blue);
+    border: none;
+    box-shadow: 0 8px 20px rgba(0, 124, 195, 0.3);
 }
 
 .icon-box {
-    width: 40px; height: 40px;
+    width: 35px; height: 35px;
     background: rgba(255,255,255,0.1);
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-    margin-bottom: 12px;
+    font-size: 18px;
+    margin-bottom: 10px;
 }
 
-.label-main { font-size: 14px; font-weight: 800; display: block; }
-.label-sub { font-size: 10px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; }
+.label-main { font-size: 13px; font-weight: 800; display: block; }
+.label-sub { font-size: 9px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; }
 
-/* --- Navegación Dock --- */
+/* --- NAV MARIO --- */
 .nav-bar {
     position: fixed; bottom: 20px; left: 20px; right: 20px;
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(25px);
-    height: 75px;
-    border-radius: 25px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(20px);
+    height: 70px;
+    border-radius: 20px;
     display: flex; justify-content: space-around; align-items: center;
     border: 1px solid var(--border);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    z-index: 1000;
 }
 
 .nav-link {
@@ -146,30 +172,44 @@ body::before {
     color: var(--text-dim); gap: 4px;
 }
 
-.nav-link.active { color: var(--primary); transform: translateY(-5px); }
-.nav-link i { font-size: 22px; font-style: normal; }
-.nav-link span { font-size: 8px; font-weight: 800; text-transform: uppercase; }
+.nav-link.active { color: var(--mario-yellow); transform: translateY(-5px); }
 
-/* --- Vistas --- */
-.view { display: none; padding-bottom: 40px; animation: slideUp 0.4s ease; }
+/* --- MENSAJE ÉXITO MARIO --- */
+.success-overlay {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+    background: var(--mario-green); color: white;
+    padding: 15px 30px; border-radius: 20px; font-weight: 800;
+    font-size: 16px; z-index: 9999; opacity: 0; pointer-events: none;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 40px rgba(67, 176, 42, 0.4);
+    display: flex; align-items: center; gap: 15px;
+}
+
+.success-overlay.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+
+.mario-jump-img {
+    width: 50px; height: 50px;
+    object-fit: contain;
+}
+
+/* --- VISTAS --- */
+.view { display: none; animation: slideIn 0.4s ease; }
 .view.active { display: block; }
+@keyframes slideIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-@keyframes slideUp { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
-
-/* --- Modales --- */
 .modal-box {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(15px); display: none; align-items: center; justify-content: center;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center;
     padding: 25px; z-index: 5000;
 }
 
 .modal-in {
     background: #111827; border: 1px solid var(--border);
-    width: 100%; max-width: 400px; border-radius: 32px; padding: 30px;
+    width: 100%; max-width: 400px; border-radius: 24px; padding: 25px;
 }
 
 .input-pro {
-    width: 100%; padding: 16px; background: rgba(255,255,255,0.05);
-    border: 1px solid var(--border); border-radius: 16px; color: white;
-    margin-bottom: 15px; font-weight: 600;
+    width: 100%; padding: 14px; background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border); border-radius: 12px; color: white;
+    margin-bottom: 12px; font-weight: 600;
 }
