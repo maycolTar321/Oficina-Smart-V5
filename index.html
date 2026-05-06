@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OFICINA PRO - V6 INFINITY</title>
+    <title>OFICINA PRO - V7 FINAL</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
@@ -28,7 +27,6 @@
         </div>
     </header>
 
-    <!-- MONITOR DE INTERNET (RESTAURADO Y MEJORADO) -->
     <div class="monitor-card">
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <span class="progress-label">Fondo Internet Mensual</span>
@@ -39,13 +37,12 @@
             <div id="int-bar" class="bar-fill"></div>
         </div>
         <div id="int-status" style="font-size: 12px; font-weight: 700; color: var(--text-dim); display: flex; align-items: center; gap: 8px;">
-            <span id="int-icon">⏳</span> <span id="int-text">Calculando saldo...</span>
+            <span id="int-icon">⏳</span> <span id="int-text">Calculando...</span>
         </div>
     </div>
 
     <main>
         
-        <!-- VISTA: PAGOS (RESTAURADA CON TODAS LAS FUNCIONES) -->
         <div id="view-pagos" class="view active">
             <div class="action-grid">
                 <div class="btn-action featured" onclick="app.action('Tramite Civil', 36, 'Oficial')">
@@ -54,61 +51,50 @@
                     <span class="label-sub">Monto Fijo: 36 Bs</span>
                 </div>
 
-                <div style="grid-column: span 2; margin: 10px 0 5px; font-size: 11px; font-weight: 800; color: var(--text-dim); letter-spacing: 1px;">APORTES INTERNET (10 Bs)</div>
-                
+                <div style="grid-column: span 2; margin: 15px 0 5px; font-size: 11px; font-weight: 800; color: var(--text-dim);">APORTES INTERNET (10 Bs)</div>
                 <div class="btn-action" onclick="app.action('Ximena', 10, 'Internet')">
                     <div class="icon-box">👤</div>
                     <span class="label-main">XIMENA</span>
-                    <span class="label-sub">Internet</span>
                 </div>
                 <div class="btn-action" onclick="app.action('Maycol', 10, 'Internet')">
                     <div class="icon-box">⚡</div>
                     <span class="label-main">MAYCOL</span>
-                    <span class="label-sub">Internet</span>
                 </div>
                 <div class="btn-action" onclick="app.action('Samuel', 10, 'Internet')">
                     <div class="icon-box">🔥</div>
                     <span class="label-main">SAMUEL</span>
-                    <span class="label-sub">Internet</span>
                 </div>
                 <div class="btn-action" onclick="app.action(app.config.officialName, 10, 'Internet', true)">
                     <div class="icon-box">👮</div>
                     <span class="official-name-display label-main">Oficial</span>
-                    <span class="label-sub">Internet</span>
                 </div>
 
-                <div style="grid-column: span 2; margin: 15px 0 5px; font-size: 11px; font-weight: 800; color: var(--text-dim); letter-spacing: 1px;">TURNOS AGUA (36 Bs)</div>
-
-                <div class="btn-action" style="grid-column: span 2; background: rgba(16, 185, 129, 0.1); border-color: var(--secondary);" onclick="app.action(app.config.officialName + ' / Maycol', 36, 'Agua', true)">
+                <div style="grid-column: span 2; margin: 20px 0 5px; font-size: 11px; font-weight: 800; color: var(--text-dim);">CICLO DE AGUA (36 Bs)</div>
+                
+                <div class="btn-action" style="grid-column: span 2; border-color: var(--secondary);" onclick="app.action(app.config.turn1, 36, 'Agua')">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <span class="official-name-display label-main">Oficial</span>
-                            <span class="label-main">/ MAYCOL</span>
-                        </div>
+                        <span id="btn-turn1-label" class="label-main">...</span>
                         <div class="icon-box" style="background: var(--secondary);">💧</div>
                     </div>
                 </div>
 
-                <div class="btn-action" style="grid-column: span 2;" onclick="app.action('Samuel / Ximena', 36, 'Agua')">
+                <div class="btn-action" style="grid-column: span 2;" onclick="app.action(app.config.turn2, 36, 'Agua')">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <span class="label-main">SAMUEL / XIMENA</span>
-                        </div>
+                        <span id="btn-turn2-label" class="label-main">...</span>
                         <div class="icon-box">💧</div>
                     </div>
                 </div>
 
-                <div style="grid-column: span 2; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 20px; text-align: center; margin-top: 10px;">
-                    <span style="font-size: 9px; font-weight: 800; color: var(--secondary);">PRÓXIMO TURNO SUGERIDO:</span>
-                    <h3 id="suggestion-text" style="font-size: 16px; margin-top: 5px;">...</h3>
+                <div style="grid-column: span 2; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 24px; text-align: center; margin-top: 10px;">
+                    <span style="font-size: 10px; font-weight: 800; color: var(--secondary);">SIGUIENTE TURNO SUGERIDO:</span>
+                    <h3 id="suggestion-text" style="font-size: 18px; margin-top: 5px; color:white;">...</h3>
                 </div>
             </div>
         </div>
 
-        <!-- VISTA: HISTORIAL -->
         <div id="view-historial" class="view">
-            <div class="monitor-card" style="border-top: 4px solid var(--accent);">
-                <h4 style="font-size: 12px; margin-bottom: 20px;">📅 CARGA DE PAGOS ANTERIORES</h4>
+            <div class="monitor-card">
+                <h4 style="font-size: 12px; margin-bottom: 20px;">📅 CARGA MANUAL</h4>
                 <select id="man-name" class="input-pro">
                     <option value="Ximena">Ximena</option>
                     <option value="Maycol">Maycol Avila</option>
@@ -116,28 +102,26 @@
                     <option value="Oficial" class="official-name-display">Oficial</option>
                     <option value="Otro">Otro...</option>
                 </select>
-                <input type="text" id="man-other" class="input-pro" placeholder="Concepto manual" style="display:none;">
+                <input type="text" id="man-other" class="input-pro" placeholder="Nombre" style="display:none;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <input type="number" id="man-amount" class="input-pro" placeholder="Monto Bs">
+                    <input type="number" id="man-amount" class="input-pro" placeholder="Monto">
                     <select id="man-cat" class="input-pro">
                         <option value="Internet">Internet</option>
                         <option value="Agua">Agua</option>
-                        <option value="Oficial">Oficial</option>
                         <option value="Otro">Otro</option>
                     </select>
                 </div>
                 <input type="date" id="man-date" class="input-pro">
-                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.addManual()">💾 GUARDAR EN HISTORIAL</button>
+                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.addManual()">GUARDAR</button>
             </div>
             <div id="log-container" style="padding: 0 20px;"></div>
         </div>
 
-        <!-- VISTA: CAJA Y REPORTES (RESTAURADA CON EL REPORTE) -->
         <div id="view-caja" class="view">
             <div class="monitor-card" style="text-align: center; background: var(--grad-blue);">
-                <span style="font-size: 11px; font-weight: 800; opacity: 0.8;">SALDO TOTAL EN CAJA</span>
-                <h1 id="total-balance" style="font-size: 42px; font-family: 'JetBrains Mono'; margin: 15px 0;">0.00 Bs</h1>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <span style="font-size: 11px; font-weight: 800; opacity: 0.8;">SALDO TOTAL</span>
+                <h1 id="total-balance" style="font-size: 42px; margin: 15px 0;">0.00 Bs</h1>
+                <div style="display: flex; gap: 10px;">
                     <div style="flex:1; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 15px;">
                         <span style="font-size: 9px; opacity: 0.8;">AGUA</span>
                         <p id="fund-agua" style="font-weight: 800;">0.00</p>
@@ -150,87 +134,76 @@
             </div>
 
             <div style="padding: 0 20px;">
+                <!-- REPORTE VISUAL POR PANTALLA -->
+                <div id="visual-report-container" class="monitor-card" style="margin: 0 0 20px;"></div>
+
                 <button class="btn-action featured" style="width: 100%; text-align: center; background: var(--grad-green); margin-bottom: 20px;" onclick="app.settleInternet()">
                     🌐 PAGAR INTERNET (179 Bs)
                 </button>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
                     <div class="btn-action" style="text-align: center;" onclick="app.showFullReport()">
-                        <div class="icon-box" style="margin: 0 auto 10px;">📋</div>
-                        <span class="label-main">REPORTE WA</span>
+                        <div class="icon-box" style="margin: 0 auto 10px;">📲</div>
+                        <span class="label-main">WHATSAPP</span>
                     </div>
                     <div class="btn-action" style="text-align: center;" onclick="app.backup()">
                         <div class="icon-box" style="margin: 0 auto 10px;">💾</div>
-                        <span class="label-main">BACKUP DB</span>
+                        <span class="label-main">DESCARGAR</span>
                     </div>
-                </div>
-
-                <div class="monitor-card" style="height: 300px; margin: 0;">
-                    <canvas id="mainChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- VISTA: PERFIL -->
         <div id="view-config" class="view">
             <div class="monitor-card">
-                <h4 style="font-size: 12px; margin-bottom: 20px;">👤 AJUSTES DE PERFIL</h4>
+                <h4 style="font-size: 12px; margin-bottom: 20px;">⚙️ CONFIGURACIÓN DEL SISTEMA</h4>
                 <div class="input-group">
-                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">NOMBRE OFICIAL ACTUAL</label>
+                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">NOMBRE OFICIAL (Nilsa, etc)</label>
                     <input type="text" id="cfg-official" class="input-pro">
                 </div>
                 <div class="input-group">
-                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">NOMBRE ADMINISTRADOR</label>
+                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">TU NOMBRE (Admin)</label>
                     <input type="text" id="cfg-admin" class="input-pro">
                 </div>
-                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.saveCfg()">ACTUALIZAR DATOS</button>
+                
+                <div style="margin: 20px 0 10px; font-size: 10px; font-weight: 800; color: var(--primary);">CONFIGURAR CICLO DE AGUA</div>
+                <div class="input-group">
+                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">TURNO 1 (Ej: Nilsa / Maycol)</label>
+                    <input type="text" id="cfg-turn1" class="input-pro">
+                </div>
+                <div class="input-group">
+                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">TURNO 2 (Ej: Samuel / Ximena)</label>
+                    <input type="text" id="cfg-turn2" class="input-pro">
+                </div>
+                
+                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.saveCfg()">ACTUALIZAR TODO</button>
             </div>
             <div style="padding: 0 20px;">
-                <button class="btn-action" style="width: 100%; color: var(--secondary); text-align: center; border-color: rgba(16, 185, 129, 0.2); margin-bottom: 10px;" onclick="app.resetWater()">🔄 REINICIAR TURNOS DE AGUA</button>
-                <button class="btn-action" style="width: 100%; color: var(--danger); text-align: center; border-color: rgba(239, 68, 68, 0.2);" onclick="app.wipe()">⚠️ BORRAR TODO EL SISTEMA</button>
+                <button class="btn-action" style="width: 100%; color: var(--secondary); text-align: center; border-color: rgba(16, 185, 129, 0.2); margin-bottom: 10px;" onclick="app.resetWater()">🔄 REINICIAR TURNOS AGUA</button>
+                <button class="btn-action" style="width: 100%; color: var(--danger); text-align: center; border-color: rgba(239, 68, 68, 0.2);" onclick="app.wipe()">⚠️ BORRAR TODO</button>
             </div>
         </div>
     </main>
 
     <nav class="nav-bar">
-        <div class="nav-link active" onclick="app.nav('view-pagos', this)">
-            <i>💰</i><span>Pagos</span>
-        </div>
-        <div class="nav-link" onclick="app.nav('view-historial', this)">
-            <i>📜</i><span>Historia</span>
-        </div>
-        <div class="nav-link" onclick="app.nav('view-caja', this)">
-            <i>📊</i><span>Caja</span>
-        </div>
-        <div class="nav-link" onclick="app.nav('view-config', this)">
-            <i>👤</i><span>Perfil</span>
-        </div>
+        <div class="nav-link active" onclick="app.nav('view-pagos', this)"><i>💰</i><span>Pagos</span></div>
+        <div class="nav-link" onclick="app.nav('view-historial', this)"><i>📜</i><span>Historia</span></div>
+        <div class="nav-link" onclick="app.nav('view-caja', this)"><i>📊</i><span>Caja</span></div>
+        <div class="nav-link" onclick="app.nav('view-config', this)"><i>👤</i><span>Perfil</span></div>
     </nav>
 
-    <!-- MODALES -->
-    <div id="modal-edit" class="modal-box">
-        <div class="modal-in">
-            <h2 style="font-size: 18px; margin-bottom: 20px;">✏️ Editar Registro</h2>
-            <input type="hidden" id="edit-id">
-            <input type="text" id="edit-n" class="input-pro" placeholder="Nombre">
-            <input type="number" id="edit-a" class="input-pro" placeholder="Monto">
-            <input type="date" id="edit-d" class="input-pro">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
-                <button class="btn-action" style="text-align: center;" onclick="app.closeEdit()">SALIR</button>
-                <button class="btn-action featured" style="text-align: center;" onclick="app.saveEdit()">LISTO</button>
-            </div>
-            <button class="btn-action" style="width: 100%; color: var(--danger); text-align: center; margin-top: 15px; font-size: 11px;" onclick="app.delete()">ELIMINAR PERMANENTE</button>
-        </div>
-    </div>
+    <div id="modal-edit" class="modal-box"><div class="modal-in">
+        <h2 style="font-size: 18px; margin-bottom: 20px;">✏️ Editar</h2>
+        <input type="hidden" id="edit-id"><input type="text" id="edit-n" class="input-pro"><input type="number" id="edit-a" class="input-pro"><input type="date" id="edit-d" class="input-pro">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;"><button class="btn-action" onclick="app.closeEdit()">SALIR</button><button class="btn-action featured" onclick="app.saveEdit()">LISTO</button></div>
+        <button class="btn-action" style="width: 100%; color: var(--danger); text-align: center; margin-top: 15px;" onclick="app.delete()">BORRAR</button>
+    </div></div>
 
-    <div id="modal-report" class="modal-box">
-        <div class="modal-in" style="max-width: 450px;">
-            <h2 style="font-size: 18px; margin-bottom: 15px;">📋 Reporte Generado</h2>
-            <div id="report-area" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; font-size: 13px; font-family: 'JetBrains Mono'; white-space: pre-wrap; margin-bottom: 20px; border: 1px solid var(--border); max-height: 300px; overflow-y: auto;"></div>
-            <button class="btn-action featured" style="width: 100%; text-align: center; background: #25d366;" onclick="app.shareWA()">📲 ENVIAR POR WHATSAPP</button>
-            <button class="btn-action" style="width: 100%; text-align: center; margin-top: 10px;" onclick="app.closeReport()">CERRAR</button>
-        </div>
-    </div>
+    <div id="modal-report" class="modal-box"><div class="modal-in">
+        <h2 style="font-size: 18px; margin-bottom: 15px;">📋 Reporte WA</h2>
+        <div id="report-area" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; font-size: 12px; font-family: 'JetBrains Mono'; white-space: pre-wrap; margin-bottom: 20px; border: 1px solid var(--border);"></div>
+        <button class="btn-action featured" style="background: #25d366;" onclick="app.shareWA()">📲 ENVIAR</button>
+        <button class="btn-action" style="margin-top: 10px;" onclick="app.closeReport()">CERRAR</button>
+    </div></div>
 
     <script src="script.js"></script>
 </body>
