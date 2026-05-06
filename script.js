@@ -12,7 +12,7 @@ const app = {
         turn1: 'OFICIAL / MAYCOL',
         turn2: 'SAMUEL / XIMENA'
     },
-    bottlesFull: JSON.parse(localStorage.getItem('oficina_v10_bottles')) || false,
+    bottlesFull: localStorage.getItem('oficina_v10_bottles') === 'true',
     isMusicPlaying: false,
     chart: null,
     trendChart: null,
@@ -75,7 +75,7 @@ const app = {
 
     fillBottles(nombreEquipo) {
         this.bottlesFull = true;
-        localStorage.setItem('oficina_v10_bottles', JSON.stringify(this.bottlesFull));
+        localStorage.setItem('oficina_v10_bottles', 'true');
         this.updateBottlesUI();
         this.showConfirm();
         this.saveEntry({
@@ -87,7 +87,7 @@ const app = {
 
     emptyBottles() {
         this.bottlesFull = false;
-        localStorage.setItem('oficina_v10_bottles', JSON.stringify(this.bottlesFull));
+        localStorage.setItem('oficina_v10_bottles', 'false');
         this.updateBottlesUI();
         this.playSound('snd-coin');
     },
@@ -268,7 +268,16 @@ const app = {
         this.sync(); this.playSound('snd-power'); this.showConfirm();
     },
 
-    wipe() { if(confirm("¿GAME OVER?")) { this.db = []; localStorage.removeItem('oficina_v10_db'); this.sync(); this.playSound('snd-over'); } },
+    wipe() { 
+        if(confirm("¿GAME OVER?")) { 
+            this.db = []; 
+            this.bottlesFull = false;
+            localStorage.removeItem('oficina_v10_db'); 
+            localStorage.setItem('oficina_v10_bottles', 'false');
+            this.sync(); 
+            this.playSound('snd-over'); 
+        } 
+    },
     backup() {
         const blob = new Blob([JSON.stringify(this.db)], {type: 'application/json'});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
