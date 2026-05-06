@@ -12,7 +12,7 @@ const app = {
         turn1: 'OFICIAL / MAYCOL',
         turn2: 'SAMUEL / XIMENA'
     },
-    bottlesFull: false,
+    bottlesFull: JSON.parse(localStorage.getItem('oficina_v10_bottles')) || false,
     isMusicPlaying: false,
     chart: null,
     trendChart: null,
@@ -75,6 +75,7 @@ const app = {
 
     fillBottles(nombreEquipo) {
         this.bottlesFull = true;
+        localStorage.setItem('oficina_v10_bottles', JSON.stringify(this.bottlesFull));
         this.updateBottlesUI();
         this.showConfirm();
         this.saveEntry({
@@ -86,6 +87,7 @@ const app = {
 
     emptyBottles() {
         this.bottlesFull = false;
+        localStorage.setItem('oficina_v10_bottles', JSON.stringify(this.bottlesFull));
         this.updateBottlesUI();
         this.playSound('snd-coin');
     },
@@ -246,8 +248,10 @@ const app = {
     showFullReport() {
         const total = this.db.reduce((acc, i) => acc + i.a, 0);
         const intB = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
-        let msg = `🍄 *SUPER REPORTE MARIO*\n💰 MONEDAS: ${total.toFixed(2)}\n🌐 INTERNET: ${intB.toFixed(2)}/179\n---------------------------\n`;
-        this.db.slice(-5).forEach(l => { if(l.a !== 0) msg += `• ${l.n}: ${l.a} Bs\n`; });
+        const summary = {};
+        this.db.forEach(item => { if(item.a > 0) summary[item.n] = (summary[item.n] || 0) + item.a; });
+        let msg = `🍄 *REPORTE DE MARIO (ESPAÑOL)*\n💰 CAJA GENERAL: ${total.toFixed(2)} Bs\n🌐 INTERNET: ${intB.toFixed(2)}/179 Bs\n---------------------------\n📊 RESUMEN DE APORTES:\n`;
+        for (let name in summary) { msg += `• ${name}: ${summary[name].toFixed(2)} Bs\n`; }
         document.getElementById('report-area').innerText = msg;
         document.getElementById('modal-report').style.display = 'flex';
     },
@@ -269,6 +273,30 @@ const app = {
         const blob = new Blob([JSON.stringify(this.db)], {type: 'application/json'});
         const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
         a.download = `mario_v10.json`; a.click();
+    },
+
+    restore(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (Array.isArray(data)) {
+                    this.db = data;
+                    localStorage.setItem('oficina_v10_db', JSON.stringify(this.db));
+                    this.sync();
+                    this.playSound('snd-power');
+                    alert('✅ Respaldo cargado correctamente!');
+                } else {
+                    alert('❌ Formato de respaldo inválido.');
+                }
+            } catch (err) {
+                alert('❌ Error al leer el archivo de respaldo.');
+            }
+            event.target.value = '';
+        };
+        reader.readAsText(file);
     },
 
     renderChart() {
