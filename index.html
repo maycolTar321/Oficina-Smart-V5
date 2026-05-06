@@ -3,20 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OFICINA PRO - MARIO ODYSSEY V8</title>
+    <title>OFICINA PRO - MARIO & FRIENDS V10</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+    <!-- SONIDOS MARIO & FRIENDS -->
+    <audio id="snd-coin" src="https://www.myinstants.com/media/sounds/coin.mp3"></audio>
+    <audio id="snd-jump" src="https://www.myinstants.com/media/sounds/mario-bros-jump.mp3"></audio>
+    <audio id="snd-theme" src="https://www.myinstants.com/media/sounds/super-mario-bros-theme-song.mp3" loop></audio>
+    <audio id="snd-over" src="https://www.myinstants.com/media/sounds/over.mp3"></audio>
+    <audio id="snd-power" src="https://www.myinstants.com/media/sounds/powerup.mp3"></audio>
 
     <!-- MENSAJE DE ÉXITO MARIO -->
     <div id="confirm-pop" class="success-overlay">
         <img src="mario.png" class="mario-jump-img" alt="Mario">
-        <span>¡IT'S-A ME, MARIO! <br><small style="font-size:10px; opacity:0.8;">PROCESO COMPLETADO</small></span>
+        <span>¡IT'S-A ME, MARIO! <br><small style="font-size:10px; opacity:0.8;">MISIÓN COMPLETADA</small></span>
     </div>
 
     <header class="header-v6">
@@ -24,40 +30,36 @@
             <div class="avatar-v6" id="h-avatar">MA</div>
             <div>
                 <h2 id="h-user" style="font-size: 16px;">Maycol Avila</h2>
-                <p style="font-size: 10px; color: var(--text-dim); font-weight: 700;">ADMINISTRADOR SUPER</p>
+                <p style="font-size: 10px; color: var(--text-dim); font-weight: 700;">ADMINISTRADOR MUSHROOM KINGDOM</p>
             </div>
         </div>
-        <div style="text-align: right;">
-            <div id="clock" style="font-family: 'JetBrains Mono'; font-size: 14px; font-weight: 800;">00:00:00</div>
-            <div id="date" style="font-size: 9px; color: var(--text-dim); font-weight: 700;">...</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="clock" style="font-family: 'JetBrains Mono'; font-size: 12px; font-weight: 800;">00:00:00</div>
+            <div id="music-btn" onclick="app.toggleMusic()" style="font-size: 20px; cursor: pointer; background: var(--card); padding: 8px; border-radius: 10px; border: 1px solid var(--border);">🔇</div>
         </div>
     </header>
 
-    <!-- MONITOR DE BOTELLONES MARIO -->
-    <div class="mario-water-card">
+    <!-- MONITOR DE BOTELLONES (HACER CLICK PARA VACIAR) -->
+    <div class="mario-water-card" onclick="app.emptyBottles()" style="border-left: 5px solid var(--mario-blue);">
         <div class="bottles-visual">
             <div id="bot-1" class="bottle"></div>
             <div id="bot-2" class="bottle"></div>
         </div>
-        <div style="flex:1;">
-            <span style="font-size: 10px; font-weight: 800; color: var(--mario-yellow);">ESTADO DE HIDRATACIÓN</span>
-            <h3 id="bottle-text" style="font-size: 15px; margin-top: 2px;">Faltan 2 botellones</h3>
+        <div style="flex:1; padding-left: 10px;">
+            <span style="font-size: 10px; font-weight: 800; color: var(--mario-yellow);">TANQUE DE AGUA</span>
+            <h3 id="bottle-text" style="font-size: 14px; margin-top: 2px;">Vacío. Toca equipo abajo.</h3>
         </div>
-        <img src="mario.png" style="width: 40px; transform: rotate(-10deg);" alt="Mario">
+        <img src="mario.png" style="width: 45px; animation: float 3s ease-in-out infinite;" alt="Mario">
     </div>
 
-    <div class="monitor-card">
+    <div class="monitor-card" style="border-left: 5px solid var(--mario-red);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 10px; font-weight: 800; color: var(--text-dim);">FONDO INTERNET MENSUAL</span>
+            <span style="font-size: 10px; font-weight: 800; color: var(--text-dim);">FONDO INTERNET</span>
             <span id="int-perc" style="font-weight: 800; color: var(--mario-blue);">0%</span>
         </div>
         <h2 id="int-bs" class="progress-bs">0.00 Bs</h2>
-        <div class="bar-bg">
-            <div id="int-bar" class="bar-fill"></div>
-        </div>
-        <div id="int-status" style="font-size: 11px; font-weight: 700; color: var(--text-dim);">
-            <span id="int-text">Calculando puntos...</span>
-        </div>
+        <div class="bar-bg"><div id="int-bar" class="bar-fill"></div></div>
+        <div id="int-status" style="font-size: 11px; font-weight: 700; color: var(--text-dim);"><span id="int-text">...</span></div>
     </div>
 
     <main>
@@ -67,150 +69,92 @@
                 <div class="btn-action featured" onclick="app.action('Tramite Civil', 36, 'Oficial')">
                     <div class="icon-box">🌟</div>
                     <span class="label-main">REGISTRAR TRÁMITE CIVIL</span>
-                    <span class="label-sub">36 Bs • +1 Estrella</span>
                 </div>
 
-                <div style="grid-column: span 2; margin: 15px 0 5px; font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1px;">COBRAR INTERNET</div>
-                <div class="btn-action" onclick="app.action('Ximena', 10, 'Internet')">
-                    <div class="icon-box">🍄</div>
-                    <span class="label-main">XIMENA</span>
-                </div>
-                <div class="btn-action" onclick="app.action('Maycol', 10, 'Internet')">
-                    <div class="icon-box">🍄</div>
-                    <span class="label-main">MAYCOL</span>
-                </div>
-                <div class="btn-action" onclick="app.action('Samuel', 10, 'Internet')">
-                    <div class="icon-box">🍄</div>
-                    <span class="label-main">SAMUEL</span>
-                </div>
-                <div class="btn-action" onclick="app.action(app.config.officialName, 10, 'Internet', true)">
-                    <div class="icon-box">👮</div>
-                    <span class="official-name-display label-main">Oficial</span>
-                </div>
+                <div style="grid-column: span 2; margin: 15px 0 5px; font-size: 10px; font-weight: 800; color: var(--text-dim);">APORTES INTERNET (10 Bs)</div>
+                <div class="btn-action" onclick="app.action('Ximena', 10, 'Internet')"><div class="icon-box">🍄</div><span class="label-main">XIMENA</span></div>
+                <div class="btn-action" onclick="app.action('Maycol', 10, 'Internet')"><div class="icon-box">🍄</div><span class="label-main">MAYCOL</span></div>
+                <div class="btn-action" onclick="app.action('Samuel', 10, 'Internet')"><div class="icon-box">🍄</div><span class="label-main">SAMUEL</span></div>
+                <div class="btn-action" onclick="app.action(app.config.officialName, 10, 'Internet', true)"><div class="icon-box">👮</div><span class="official-name-display label-main">Oficial</span></div>
 
-                <div style="grid-column: span 2; margin: 20px 0 5px; font-size: 10px; font-weight: 800; color: var(--text-dim); letter-spacing: 1px;">LLENAR BOTELLONES (36 Bs)</div>
+                <div style="grid-column: span 2; margin: 20px 0 5px; font-size: 10px; font-weight: 800; color: var(--text-dim);">EQUIPOS DE AGUA (LLENAR BOTELLONES)</div>
                 
-                <div class="btn-action water-btn" style="grid-column: span 2;" onclick="app.action(app.config.turn1, 36, 'Agua')">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                <!-- BOTÓN MARIO (TURNO 1) -->
+                <div class="btn-action water-btn" style="grid-column: span 2; display: flex; align-items: center; gap: 15px;" onclick="app.fillBottles(app.config.turn1)">
+                    <img src="mario.png" style="width: 30px;" alt="Mario">
+                    <div style="flex:1;">
                         <span id="btn-turn1-label" class="label-main">...</span>
-                        <div class="icon-box" style="background: rgba(255,255,255,0.2); margin:0;">🥤</div>
+                        <span class="label-sub">TURNO MARIO</span>
                     </div>
                 </div>
 
-                <div class="btn-action water-btn" style="grid-column: span 2; background: var(--mario-green);" onclick="app.action(app.config.turn2, 36, 'Agua')">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                <!-- BOTÓN LUIGI (TURNO 2) -->
+                <div class="btn-action water-btn" style="grid-column: span 2; background: var(--mario-green); display: flex; align-items: center; gap: 15px;" onclick="app.fillBottles(app.config.turn2)">
+                    <img src="friends.png" style="width: 30px; object-fit: cover; object-position: left; height: 30px;" alt="Luigi">
+                    <div style="flex:1;">
                         <span id="btn-turn2-label" class="label-main">...</span>
-                        <div class="icon-box" style="background: rgba(255,255,255,0.2); margin:0;">🥤</div>
+                        <span class="label-sub">TURNO LUIGI</span>
                     </div>
                 </div>
 
-                <div style="grid-column: span 2; padding: 18px; background: rgba(250, 205, 0, 0.1); border: 1px solid rgba(250, 205, 0, 0.2); border-radius: 20px; text-align: center; margin-top: 10px;">
-                    <span style="font-size: 10px; font-weight: 800; color: var(--mario-yellow);">PROXIMO TURNO DE AGUA:</span>
-                    <h3 id="suggestion-text" style="font-size: 16px; margin-top: 4px; color:white;">...</h3>
+                <div style="grid-column: span 2; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 20px; text-align: center; border: 1px dashed var(--border);">
+                    <span style="font-size: 9px; font-weight: 800; color: var(--mario-yellow);">SIGUIENTE NIVEL AGUA:</span>
+                    <h3 id="suggestion-text" style="font-size: 15px; margin-top: 5px;">...</h3>
                 </div>
             </div>
         </div>
 
         <div id="view-historial" class="view">
-            <div class="monitor-card" style="border-top: 4px solid var(--mario-yellow);">
-                <h4 style="font-size: 12px; margin-bottom: 20px;">📜 BLOQUE DE MEMORIA (HISTORIAL)</h4>
+            <div class="monitor-card" style="border-top: 5px solid var(--mario-yellow);">
+                <h4 style="font-size: 12px; margin-bottom: 20px;">📜 MEMORIA DE MISIONES</h4>
                 <select id="man-name" class="input-pro">
-                    <option value="Ximena">Ximena</option>
-                    <option value="Maycol">Maycol Avila</option>
-                    <option value="Samuel">Samuel</option>
-                    <option value="Oficial" class="official-name-display">Oficial</option>
-                    <option value="Otro">Otro...</option>
+                    <option value="Ximena">Ximena</option><option value="Maycol">Maycol Avila</option><option value="Samuel">Samuel</option><option value="Oficial" class="official-name-display">Oficial</option><option value="Otro">Otro...</option>
                 </select>
-                <input type="text" id="man-other" class="input-pro" placeholder="Nombre" style="display:none;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <input type="number" id="man-amount" class="input-pro" placeholder="Monto">
-                    <select id="man-cat" class="input-pro">
-                        <option value="Internet">Internet</option>
-                        <option value="Agua">Agua</option>
-                        <option value="Otro">Otro</option>
-                    </select>
-                </div>
-                <input type="date" id="man-date" class="input-pro">
-                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.addManual()">GUARDAR</button>
+                <input type="text" id="man-other" class="input-pro" style="display:none;"><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"><input type="number" id="man-amount" class="input-pro" placeholder="Monto"><select id="man-cat" class="input-pro"><option value="Internet">Internet</option><option value="Agua">Agua</option><option value="Otro">Otro</option></select></div><input type="date" id="man-date" class="input-pro"><button class="btn-action featured" style="width: 100%;" onclick="app.addManual()">GUARDAR</button>
             </div>
             <div id="log-container" style="padding: 0 20px;"></div>
         </div>
 
         <div id="view-caja" class="view">
-            <div class="monitor-card" style="text-align: center; background: var(--mario-blue); box-shadow: 0 10px 30px rgba(0, 124, 195, 0.3);">
-                <span style="font-size: 11px; font-weight: 800; opacity: 0.8;">MONEDAS TOTALES (CAJA)</span>
+            <div class="monitor-card" style="text-align: center; background: var(--mario-blue);">
+                <span style="font-size: 11px; font-weight: 800; opacity: 0.8;">MONEDAS RECOLECTADAS</span>
                 <h1 id="total-balance" style="font-size: 42px; margin: 15px 0;">0.00 Bs</h1>
-                <div style="display: flex; gap: 10px;">
-                    <div style="flex:1; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 15px;">
-                        <span style="font-size: 9px; opacity: 0.8;">OTROS APORTES</span>
-                        <p id="fund-otro" style="font-weight: 800;">0.00</p>
-                    </div>
-                </div>
             </div>
-
             <div style="padding: 0 20px;">
                 <div id="visual-report-container" class="monitor-card" style="margin: 0 0 20px;"></div>
-
-                <div class="monitor-card" style="height: 250px; margin: 0 0 20px;">
-                    <canvas id="mainChart"></canvas>
-                </div>
-
-                <div class="monitor-card" style="height: 250px; margin: 0 0 20px;">
-                    <h4 style="font-size: 10px; color: var(--text-dim); margin-bottom: 10px;">📈 TENDENCIA FINANCIERA</h4>
-                    <canvas id="trendChart"></canvas>
-                </div>
-
-                <button class="btn-action featured" style="width: 100%; text-align: center; background: var(--mario-green); margin-bottom: 20px;" onclick="app.settleInternet()">
-                    🌐 PAGAR MES (179 Bs)
+                
+                <!-- BOTÓN BOWSER PARA EL PAGO GRANDE -->
+                <button class="btn-action" style="width: 100%; background: #000; border: 2px solid #333; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 15px; padding: 25px;" onclick="app.settleInternet()">
+                    <img src="friends.png" style="width: 40px; object-fit: cover; object-position: right; height: 40px;" alt="Bowser">
+                    <div style="text-align: left;">
+                        <span style="display: block; font-size: 16px; font-weight: 800; color: #ff4500;">DERROTAR A BOWSER</span>
+                        <span style="font-size: 10px; color: #fff; opacity: 0.7;">PAGAR INTERNET (179 Bs)</span>
+                    </div>
                 </button>
+
+                <div class="monitor-card" style="height: 200px; margin: 0 0 20px;"><canvas id="mainChart"></canvas></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
-                    <div class="btn-action" style="text-align: center;" onclick="app.showFullReport()">
-                        <div class="icon-box" style="margin: 0 auto 10px;">📲</div>
-                        <span class="label-main">WHATSAPP</span>
-                    </div>
-                    <div class="btn-action" style="text-align: center;" onclick="app.backup()">
-                        <div class="icon-box" style="margin: 0 auto 10px;">💾</div>
-                        <span class="label-main">BACKUP</span>
-                    </div>
+                    <div class="btn-action" style="text-align: center;" onclick="app.showFullReport()">📲 WHATSAPP</div>
+                    <div class="btn-action" style="text-align: center;" onclick="app.backup()">💾 BACKUP</div>
                 </div>
             </div>
         </div>
 
         <div id="view-config" class="view">
             <div class="monitor-card">
-                <h4 style="font-size: 12px; margin-bottom: 20px;">⚙️ AJUSTES DEL JUEGO</h4>
-                <div class="input-group">
-                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">NOMBRE OFICIAL</label>
-                    <input type="text" id="cfg-official" class="input-pro">
-                </div>
-                <div class="input-group">
-                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">TU NOMBRE</label>
-                    <input type="text" id="cfg-admin" class="input-pro">
-                </div>
-                
-                <div style="margin: 20px 0 10px; font-size: 10px; font-weight: 800; color: var(--mario-red);">CONFIGURAR TURNOS AGUA</div>
-                <div class="input-group">
-                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">TURNO 1</label>
-                    <input type="text" id="cfg-turn1" class="input-pro">
-                </div>
-                <div class="input-group">
-                    <label style="font-size: 10px; color: var(--text-dim); margin-bottom: 5px; display: block;">TURNO 2</label>
-                    <input type="text" id="cfg-turn2" class="input-pro">
-                </div>
-                
-                <button class="btn-action featured" style="width: 100%; text-align: center;" onclick="app.saveCfg()">GUARDAR CAMBIOS</button>
+                <h4 style="font-size: 12px; margin-bottom: 20px;">⚙️ OPCIONES DEL JUEGO</h4>
+                <input type="text" id="cfg-official" class="input-pro" placeholder="Oficial"><input type="text" id="cfg-admin" class="input-pro" placeholder="Admin"><input type="text" id="cfg-turn1" class="input-pro" placeholder="Turno 1"><input type="text" id="cfg-turn2" class="input-pro" placeholder="Turno 2"><button class="btn-action featured" style="width: 100%;" onclick="app.saveCfg()">ACTUALIZAR</button>
             </div>
             <div style="padding: 0 20px;">
-                <button class="btn-action" style="width: 100%; color: var(--mario-green); text-align: center; border-color: rgba(67, 176, 42, 0.2); margin-bottom: 10px;" onclick="app.resetWater()">🔄 REINICIAR BOTELLONES</button>
-                <button class="btn-action" style="width: 100%; color: var(--mario-red); text-align: center; border-color: rgba(230, 36, 35, 0.2);" onclick="app.wipe()">⚠️ BORRAR TODO</button>
+                <button class="btn-action" style="width: 100%; color: var(--mario-red); text-align: center; border-color: rgba(230, 36, 35, 0.2);" onclick="app.wipe()">⚠️ GAME OVER (REINICIAR)</button>
             </div>
         </div>
     </main>
 
     <nav class="nav-bar">
-        <div class="nav-link active" onclick="app.nav('view-pagos', this)"><i>💰</i><span>Caja</span></div>
+        <div class="nav-link active" onclick="app.nav('view-pagos', this)"><i>💰</i><span>Jugar</span></div>
         <div class="nav-link" onclick="app.nav('view-historial', this)"><i>📜</i><span>Libro</span></div>
-        <div class="nav-link" onclick="app.nav('view-caja', this)"><i>📊</i><span>Mapa</span></div>
+        <div class="nav-link" onclick="app.nav('view-caja', this)"><i>📊</i><span>Caja</span></div>
         <div class="nav-link" onclick="app.nav('view-config', this)"><i>👤</i><span>Perfil</span></div>
     </nav>
 
@@ -218,11 +162,10 @@
         <h2 style="font-size: 18px; margin-bottom: 20px;">✏️ Editar Bloque</h2>
         <input type="hidden" id="edit-id"><input type="text" id="edit-n" class="input-pro"><input type="number" id="edit-a" class="input-pro"><input type="date" id="edit-d" class="input-pro">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;"><button class="btn-action" onclick="app.closeEdit()">SALIR</button><button class="btn-action featured" onclick="app.saveEdit()">LISTO</button></div>
-        <button class="btn-action" style="width: 100%; color: var(--mario-red); text-align: center; margin-top: 15px;" onclick="app.delete()">BORRAR</button>
     </div></div>
 
     <div id="modal-report" class="modal-box"><div class="modal-in">
-        <h2 style="font-size: 18px; margin-bottom: 15px;">📋 Pergamino WA</h2>
+        <h2 style="font-size: 18px; margin-bottom: 15px;">📋 Pergamino</h2>
         <div id="report-area" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; font-size: 12px; font-family: 'JetBrains Mono'; white-space: pre-wrap; margin-bottom: 20px; border: 1px solid var(--border);"></div>
         <button class="btn-action featured" style="background: #25d366;" onclick="app.shareWA()">📲 ENVIAR</button>
         <button class="btn-action" style="margin-top: 10px;" onclick="app.closeReport()">CERRAR</button>
