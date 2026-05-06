@@ -295,6 +295,15 @@ const app = {
         }
     },
 
+    resetWater() {
+        if(confirm("¿Reiniciar el ciclo de turnos de agua? Se borrará el historial de pagos de agua para empezar de cero.")) {
+            this.db = this.db.filter(i => i.t !== 'Agua');
+            localStorage.setItem('oficina_v6_db', JSON.stringify(this.db));
+            this.sync();
+            alert("🔄 Turnos de agua reiniciados");
+        }
+    },
+
     backup() {
         const blob = new Blob([JSON.stringify(this.db)], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
