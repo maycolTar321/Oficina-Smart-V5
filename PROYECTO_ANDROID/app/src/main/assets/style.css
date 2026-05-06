@@ -1,0 +1,193 @@
+:root {
+    --primary: #5c67f2;
+    --primary-light: #eef0ff;
+    --accent: #a5a6f6;
+    --bg-app: #f4f7ff;
+    --surface: #ffffff;
+    --text-main: #2d3436;
+    --text-muted: #636e72;
+    --danger: #ff7675;
+    --success: #55efc4;
+    --shadow-soft: 0 10px 30px rgba(92, 103, 242, 0.1);
+    --radius-xl: 40px;
+    --radius-lg: 24px;
+}
+
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    overflow-x: hidden;
+    padding-bottom: 120px;
+}
+
+/* --- Header Estilo Smart App --- */
+.app-header {
+    background: linear-gradient(180deg, var(--primary) 0%, #7d88f5 100%);
+    height: 220px;
+    border-radius: 0 0 50px 50px;
+    padding: 60px 25px;
+    color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-circle {
+    width: 80px; height: 80px;
+    background: white;
+    border-radius: 50%;
+    padding: 3px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+}
+
+.profile-circle img, .profile-circle div {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    background: var(--primary-light);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: var(--primary); font-size: 24px;
+}
+
+/* --- Widget de Meta (Flotante) --- */
+.main-widget {
+    background: var(--surface);
+    margin: -50px 25px 25px;
+    border-radius: var(--radius-lg);
+    padding: 25px;
+    box-shadow: var(--shadow-soft);
+    position: relative;
+    z-index: 100;
+}
+
+.progress-container {
+    height: 10px; background: var(--primary-light);
+    border-radius: 20px; margin: 15px 0; overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%; width: 0%;
+    background: var(--primary);
+    border-radius: 20px;
+    transition: width 1s ease;
+}
+
+/* --- Apartados de Secciones --- */
+.view {
+    display: none;
+    padding: 0 25px;
+    animation: fadeIn 0.4s ease;
+}
+
+.view.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Tarjetas de Funciones --- */
+.card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.smart-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid transparent;
+    transition: 0.3s;
+}
+
+.smart-card:active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.card-icon {
+    width: 45px; height: 45px;
+    background: var(--primary-light);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+}
+
+/* --- Navegación Dock Estilo Referencia --- */
+.dock-nav {
+    position: fixed;
+    bottom: 0; left: 0; width: 100%;
+    height: 90px;
+    background: var(--surface);
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 20px 20px;
+    z-index: 1000;
+    border-radius: 40px 40px 0 0;
+}
+
+.nav-item {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+    color: var(--text-muted);
+    font-size: 10px; font-weight: 700;
+    transition: 0.3s;
+}
+
+.nav-item i { font-size: 24px; font-style: normal; }
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+.nav-item.active::after {
+    content: ''; width: 5px; height: 5px;
+    background: var(--primary); border-radius: 50%;
+}
+
+/* --- Botones --- */
+.btn-main {
+    width: 100%; padding: 18px;
+    background: var(--primary); color: white;
+    border: none; border-radius: 20px;
+    font-weight: 800; font-size: 15px;
+    box-shadow: 0 10px 20px rgba(92, 103, 242, 0.2);
+}
+
+/* --- Modales --- */
+.modal {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(10px);
+    display: none; align-items: center; justify-content: center;
+    padding: 25px; z-index: 2000;
+}
+
+.modal-content {
+    background: white; border-radius: 35px;
+    padding: 30px; width: 100%; max-width: 400px;
+}
+
+.input-field {
+    width: 100%; padding: 15px; border-radius: 15px;
+    background: var(--bg-app); border: 2px solid transparent;
+    margin-bottom: 15px; font-weight: 600;
+}
+
+.input-field:focus { border-color: var(--primary); background: white; }
