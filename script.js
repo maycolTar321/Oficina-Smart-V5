@@ -114,7 +114,15 @@ const app = {
             n: finalName, a: parseFloat(monto), t: tipo,
             d: new Date().toISOString().split('T')[0], ts: Date.now()
         });
-        this.playSound('snd-coin');
+        
+        if(tipo === 'Oficial' || tipo === 'Internet') {
+            this.spawnEffect('fireball');
+            this.playSound('snd-fireball');
+        } else {
+            this.spawnEffect('coin');
+            this.playSound('snd-coin');
+        }
+        
         this.showConfirm();
     },
 
@@ -136,7 +144,7 @@ const app = {
 
     sync() {
         const total = this.db.reduce((acc, i) => acc + i.a, 0);
-        const intB = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
+        const intB = this.db.filter(i => i.t === 'Internet' || i.t === 'Oficial').reduce((acc, i) => acc + i.a, 0);
         document.getElementById('total-balance').innerText = total.toFixed(2) + " Bs";
         
         document.querySelectorAll('.official-name-display').forEach(el => el.innerText = this.config.officialName);
@@ -149,12 +157,22 @@ const app = {
         document.getElementById('int-perc').innerText = Math.floor(porc) + "%";
         document.getElementById('int-bar').style.width = porc + "%";
         
+        // Efecto visual de Bowser según vida
+        const bowserImg = document.querySelector('.bowser-img');
+        if(bowserImg) {
+            bowserImg.style.filter = `grayscale(${100 - porc}%) contrast(${50 + (porc/2)}%)`;
+            if(porc >= 100) bowserImg.classList.add('defeated-glow');
+            else bowserImg.classList.remove('defeated-glow');
+        }
+
         if(intB >= target) {
-            document.getElementById('int-text').innerText = "¡MISIÓN CUMPLIDA! LISTO PARA PAGAR";
-            document.getElementById('int-text').style.color = "var(--mario-green)";
+            document.getElementById('int-text').innerText = "¡BOWSER DEBILITADO! ¡DALE EL GOLPE FINAL!";
+            document.getElementById('int-text').style.color = "var(--mario-yellow)";
+            document.getElementById('bowser-btn').classList.add('ready');
         } else {
-            document.getElementById('int-text').innerText = `Faltan ${(target - intB).toFixed(2)} monedas`;
+            document.getElementById('int-text').innerText = `Faltan ${(target - intB).toFixed(2)} monedas para el Dragón`;
             document.getElementById('int-text').style.color = "var(--text-dim)";
+            document.getElementById('bowser-btn').classList.remove('ready');
         }
 
         const ultAgua = this.db.filter(i => i.t === 'Agua').sort((a,b) => b.ts - a.ts)[0];
@@ -203,13 +221,31 @@ const app = {
     getIcon(t) { return t === 'Internet' ? '🍄' : (t === 'Agua' ? '🥤' : (t === 'Oficial' ? '🌟' : '📝')); },
 
     settleInternet() {
-        const current = this.db.filter(i => i.t === 'Internet').reduce((acc, i) => acc + i.a, 0);
-        if(current < 179) return alert("❌ No tienes suficientes monedas para Bowser");
+        const current = this.db.filter(i => i.t === 'Internet' || i.t === 'Oficial').reduce((acc, i) => acc + i.a, 0);
+        if(current < 179) {
+            this.playSound('snd-error');
+            const btn = document.getElementById('bowser-btn');
+            btn.classList.add('shake');
+            setTimeout(() => btn.classList.remove('shake'), 500);
+            return;
+        }
         if(confirm("¿Derrotar a Bowser y pagar el mes?")) {
             this.saveEntry({ id: 'OUT-' + Date.now(), n: 'PAGO MES INTERNET', a: -179, t: 'Internet', d: new Date().toISOString().split('T')[0], ts: Date.now() });
-            this.playSound('snd-power');
+            this.playSound('snd-win');
             this.showConfirm();
+            this.spawnEffect('victory');
         }
+    },
+
+    spawnEffect(type) {
+        const container = document.body;
+        const el = document.createElement('div');
+        el.className = `mario-effect ${type}`;
+        el.innerHTML = type === 'coin' ? '🪙' : (type === 'fireball' ? '🔥' : '👑');
+        el.style.left = (Math.random() * 80 + 10) + '%';
+        el.style.top = '80%';
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 1000);
     },
 
     openEdit(id) {

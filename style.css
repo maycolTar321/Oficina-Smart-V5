@@ -144,6 +144,58 @@ body::before {
     box-shadow: 0 8px 20px rgba(0, 124, 195, 0.3);
 }
 
+#bowser-btn {
+    transition: 0.5s;
+    position: relative;
+    overflow: hidden;
+}
+
+#bowser-btn.ready {
+    border-color: var(--mario-yellow) !important;
+    box-shadow: 0 0 30px rgba(250, 205, 0, 0.5);
+    animation: pulse-gold 2s infinite;
+}
+
+#bowser-btn.ready::after {
+    content: '¡GOLPEA!';
+    position: absolute;
+    top: 5px; right: 10px;
+    font-size: 8px; font-weight: 900;
+    color: var(--mario-yellow);
+}
+
+@keyframes pulse-gold {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.bowser-img {
+    transition: 1s;
+}
+
+.defeated-glow {
+    filter: drop-shadow(0 0 10px var(--mario-yellow)) !important;
+    animation: flash 0.5s infinite;
+}
+
+@keyframes flash {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.shake {
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-5px); }
+}
+
 .icon-box {
     width: 35px; height: 35px;
     background: rgba(255,255,255,0.1);
@@ -212,4 +264,36 @@ body::before {
     width: 100%; padding: 14px; background: rgba(255,255,255,0.05);
     border: 1px solid var(--border); border-radius: 12px; color: white;
     margin-bottom: 12px; font-weight: 600;
+}
+
+/* --- EFECTOS MARIO VOLADORES --- */
+.mario-effect {
+    position: fixed;
+    font-size: 40px;
+    pointer-events: none;
+    z-index: 10000;
+    animation: flyUp 1s ease-out forwards;
+}
+
+@keyframes flyUp {
+    0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-300px) scale(2) rotate(360deg); opacity: 0; }
+}
+
+.mario-effect.fireball {
+    filter: drop-shadow(0 0 15px orange);
+}
+
+.mario-effect.coin {
+    filter: drop-shadow(0 0 10px yellow);
+}
+
+.mario-effect.victory {
+    animation: victoryBlast 1.5s ease-out forwards;
+}
+
+@keyframes victoryBlast {
+    0% { transform: scale(0); opacity: 1; }
+    50% { transform: scale(5); opacity: 0.5; }
+    100% { transform: scale(10); opacity: 0; }
 }
